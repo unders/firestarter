@@ -1,0 +1,24 @@
+{
+  "name": "typescript-app",
+  "version": "0.0.1",
+  "description": "learn typescript",
+  "main": "index.js",
+  "dependencies": {
+    "hyperhtml": "^1.7.3"
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.2.3",
+    "source-map-loader": "^0.2.1",
+    "typescript": "^2.5.2",
+    "webpack": "^3.5.6"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/unders/typescript"
+  },
+  "author": "Anders Tornqvist",
+  "license": "ISC"
+}
