@@ -1,6 +1,6 @@
 import hyperHTML = require('hyperhtml');
 
-export class HTML {
+export class Dom {
     static wire(obj?: object, typeID?: string): (template: TemplateStringsArray, ...args : any[]) => void {
         return hyperHTML.wire(obj, typeID)
     }

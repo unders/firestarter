@@ -1,4 +1,4 @@
-import { HTML as html } from "./html"
+import { Dom as dom } from "./dom/dom"
 
 const clock = document.querySelector('#root');
 const el = document.querySelector('#hello');
@@ -10,7 +10,7 @@ if (el !== null && clock !== null) {
     };
 
     comment(options)
-    const render = html.bind(clock)
+    const render = dom.bind(clock)
     tick(render);
     setInterval(tick, 1000, render);
 }
@@ -36,14 +36,14 @@ interface Comment {
 }
 
 function comment(o: Options): void {
-    html.bind(o.element)`
+    dom.bind(o.element)`
     <form onsubmit="${submit}">
         <textarea placeholder="Write a comment..." cols="50" rows="5"></textarea>
         </br>
         <button>Send</button>
     </form>
     <h3>${o.title}</h3>
-    <ul class="comments">${o.comments.map( (comment) => html.wire(comment)`
+    <ul class="comments">${o.comments.map( (comment) => dom.wire(comment)`
         <li>
             ${comment.body}
         </li>`)}
