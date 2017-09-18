@@ -1,19 +1,56 @@
-class Student {
-    fullName: string;
-    constructor(public firstName: string, public middleInitial: string, public lastName: string) {
-        this.fullName = firstName + " " + middleInitial + " " + lastName;
-    }
+import { HTML as html } from "./html"
+
+const clock = document.querySelector('#root');
+const el = document.querySelector('#hello');
+if (el !== null && clock !== null) {
+    let options: Options = {
+        element: el,
+        title: "Comments",
+        comments: [{body: "This is the body text. Very cool"}]
+    };
+
+    comment(options)
+    const render = html.bind(clock)
+    tick(render);
+    setInterval(tick, 1000, render);
 }
 
-interface Person {
-    firstName: string;
-    lastName: string;
+function tick(render: (template: TemplateStringsArray, ...args : any[]) => void): void {
+    render`
+    <div>
+      <h2>It is ${new Date().toLocaleTimeString()}.</h2>
+    </div>
+  `;
 }
 
-function greeter(person : Person) {
-    return "Hello, " + person.firstName + " " + person.lastName
+interface Options {
+    element: Element;
+    title: string;
+    comments: Comment[];
 }
 
-let user = new Student("Jane", "M.", "Austen");
+interface Comment {
+    body: string;
+    // author: string;
+    // publishedAt: Date;
+}
 
-document.body.innerHTML = greeter(user);
+function comment(o: Options): void {
+    html.bind(o.element)`
+    <form onsubmit="${submit}">
+        <textarea placeholder="Write a comment..." cols="50" rows="5"></textarea>
+        </br>
+        <button>Send</button>
+    </form>
+    <h3>${o.title}</h3>
+    <ul class="comments">${o.comments.map( (comment) => html.wire(comment)`
+        <li>
+            ${comment.body}
+        </li>`)}
+    </ul>`;
+}
+
+function submit(event: Event) {
+    event.preventDefault();
+    console.log("event", event.target);
+}
