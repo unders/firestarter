@@ -1,0 +1,12 @@
+@import "space";
+
+@mixin funcbox-comment($font-size-body, $breakpoint) {
+  #funcbox-comment {
+    @include ph1-to-ph2($breakpoint);
+  }
+
+  .funcbox-textarea, .funcbox-button {
+    font-size: $font-size-body;
+  }
+}
+

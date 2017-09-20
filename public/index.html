@@ -1,13 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js" lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="Demo of functionbox's funcbox-comment">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>functionbox</title>
-    <script src="/assets/css/bundle.css"></script>
+    <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
-    <h1>functionbox</h1>
-    <div id="funcbox-comment">
+    <div class="container">
+        <header>
+            <div class="max-width">
+                <h1><a href="/">functionbox</a></h1>
+            </div>
+        </header>
+        <section>
+            <div class="max-width">
+                <div id="funcbox-comment">
+                    <form   class="funcbox-form">
+                        <textarea class="funcbox-textarea"
+                                  name='body'
+                                  placeholder="write a comment"></textarea>
+                        <span class="funcbox-textarea-error" style="visibility: hidden;"></span>
+                        <button class="funcbox-button">Send</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <footer></footer>
     </div>
-    <script src="/assets/js/bundle.js"></script>
+    <script src="assets/js/bundlex.js"></script>
 </body>
 </html>
