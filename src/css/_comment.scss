@@ -1,11 +1,31 @@
 @import "space";
+@import "palette";
 
 @mixin funcbox-comment($font-size-body, $breakpoint) {
   #funcbox-comment {
     @include ph1-to-ph2($breakpoint);
   }
+  .funcbox-textarea-error {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: $secondary-text-color;
+    height: 30px;
+    font-size: 16px;
+    display: block;
+  }
+  .funcbox-textarea {
+    background: $body-color;
+    width: 100%;
+    border: none;
+    border-bottom: thin solid $divider-color;
+  }
+
+  .funcbox-textarea.dirty {
+    min-height: 200px;
+  }
 
   .funcbox-textarea, .funcbox-button {
+    display: block;
     font-size: $font-size-body;
   }
 }
