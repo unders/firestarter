@@ -1,17 +1,22 @@
 export class Error {
     readonly code: number;
-    readonly text: string;
-    readonly description: string;
+    readonly status: string;
+    readonly message: string;
     readonly value: object;
 
-    constructor(code: number, data: object, desc: string) {
+    constructor(code: number, message: string, data: object) {
         this.code = code;
-        this.text = Error.text(code);
-        this.description = desc;
+        this.status = Error.statusText(code);
+        this.message = message;
         this.value = data;
     }
 
-    static text(code: number): string {
+    static fromJSON(json: string): Error {
+        const body = JSON.parse(json) as JSONError;
+        return new Error(body.error.code, body.error.message, body.error.value);
+    }
+
+    static statusText(code: number): string {
         switch(code) {
             case 400: {
                 // if a form is invalid (form validation)
@@ -47,3 +52,15 @@ export class Error {
         }
     }
 }
+
+interface JSONError {
+    error: JSONErrorBody;
+}
+
+interface JSONErrorBody {
+    code: number;
+    message: string;
+    status: string;
+    value: object;
+}
+

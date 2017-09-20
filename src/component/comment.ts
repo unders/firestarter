@@ -1,5 +1,5 @@
 import { Comment } from "../data/comment"
-import { Poster, Request} from "../client/client"
+import { Poster} from "../client/client"
 import { Dom as dom } from "../dom/dom"
 
 export interface Props {
@@ -136,20 +136,23 @@ class Form {
             this.render();
             return;
         }
-        const json = this.view.toJSON();
+        const req = this.view.toJSON();
         this.view.reset();
         this.render();
 
-        // animate a fast add at top of list...
+        // animate a fast add at the top of list...
 
-        const {value, err} = await this.client.post(new Request(true, {json: json}));
+        const {json, err} = await this.client.post(req);
         if (err) {
             // animate and replace list item with error message
-            console.log(err.code, err.text, value);
+            if (err.code == 400) {
+
+            }
+            console.log(err.code, err.status, err.message, err.value);
         } else {
             // resolve optimistic update
             // update store.
-            console.log("value: ", value);
+            console.log("json: ", json);
         }
     }
 
