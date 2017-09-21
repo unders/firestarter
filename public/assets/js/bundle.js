@@ -233,10 +233,22 @@ var Form = /** @class */ (function () {
         this.html = dom_1.Dom.wire(this);
         this.submit = this.submit.bind(this);
         this.input = this.input.bind(this);
+        this.grow = this.grow.bind(this);
+        this.shrink = this.shrink.bind(this);
     }
     Form.prototype.input = function (e) {
         var input = e.target;
         this.view.data[input.name] = input.value;
+    };
+    Form.prototype.shrink = function (e) {
+        // const el = e.target as HTMLTextAreaElement;
+        // console.log(e);
+    };
+    Form.prototype.grow = function (e) {
+        var el = e.target;
+        if (el.scrollHeight > el.clientHeight) {
+            el.style.height = el.scrollHeight + "px";
+        }
     };
     Form.prototype.submit = function (e) {
         return __awaiter(this, void 0, void 0, function () {
@@ -278,7 +290,15 @@ var Form = /** @class */ (function () {
         var data = this.view.data;
         var body = this.view.body;
         var submit = this.view.submit;
-        return (_a = ["\n            <form   class=\"funcbox-form\"\n                    onsubmit=\"", "\"\n                    oninput=", ">\n                <textarea   class=\"", "\"\n                            name='body'\n                            placeholder=\"", "\"\n                            cols=\"50\"\n                            value=\"", "\"\n                            rows=\"5\"></textarea>\n                </br>\n                <span class=\"funcbox-textarea-error\" style=\"", "\">\n                    ", "\n                </span>\n                <button class=\"funcbox-button\"\n                        disabled=", ">", "</button>\n            </form>"], _a.raw = ["\n            <form   class=\"funcbox-form\"\n                    onsubmit=\"", "\"\n                    oninput=", ">\n                <textarea   class=\"", "\"\n                            name='body'\n                            placeholder=\"", "\"\n                            cols=\"50\"\n                            value=\"", "\"\n                            rows=\"5\"></textarea>\n                </br>\n                <span class=\"funcbox-textarea-error\" style=\"", "\">\n                    ", "\n                </span>\n                <button class=\"funcbox-button\"\n                        disabled=", ">", "</button>\n            </form>"], this.html(_a, this.submit, this.input, ['funcbox-textarea', body.klass].join(' '), body.placeholder, data.body, body.style, body.error, submit.disable, submit.title));
+        // keydown
+        // <textarea class="funcbox-textarea dirty"
+        // name='body'
+        // placeholder="Write a comment"></textarea>
+        //     <span class="funcbox-textarea-error" style="visibility: hidden;">
+        //     Please, write something.
+        // </span>
+        // <button class="funcbox-button">Send</button>
+        return (_a = ["\n            <form   class=\"funcbox-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <textarea   class=\"", "\"\n                            oninput=\"", "\"\n                            onkeydown=\"", "\"\n                            name='body'\n                            placeholder=\"", "\"\n                            value=\"", "\"></textarea>\n                </br>\n                <span class=\"funcbox-textarea-error\" style=\"", "\">\n                    ", "\n                </span>\n                <button class=\"funcbox-button\"\n                        disabled=", ">", "</button>\n            </form>"], _a.raw = ["\n            <form   class=\"funcbox-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <textarea   class=\"", "\"\n                            oninput=\"", "\"\n                            onkeydown=\"", "\"\n                            name='body'\n                            placeholder=\"", "\"\n                            value=\"", "\"></textarea>\n                </br>\n                <span class=\"funcbox-textarea-error\" style=\"", "\">\n                    ", "\n                </span>\n                <button class=\"funcbox-button\"\n                        disabled=", ">", "</button>\n            </form>"], this.html(_a, this.submit, this.input, ['funcbox-textarea', body.klass].join(' '), this.grow, this.shrink, body.placeholder, data.body, body.style, body.error, submit.disable, submit.title));
         var _a;
     };
     return Form;

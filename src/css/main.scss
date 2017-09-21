@@ -4,13 +4,12 @@
 @import "comment";
 @import "space";
 
+//
+//       CONSTANTS
+//
 $font-size-body: 20px;
 $breakpoint-small: 460px;
 
-//
-//        Components
-//
-@include funcbox-comment($font-size-body, $breakpoint-small);
 
 //
 //         LAYOUT
@@ -39,7 +38,7 @@ $breakpoint-small: 460px;
 //         BODY
 //
 body {
-  margin: 0px;
+  margin: 0;
   font-size: $font-size-body;
   background: $body-color;
 }
@@ -50,7 +49,7 @@ body {
 .max-width {
   margin-right: auto;
   margin-left: auto;
-  max-width: 48rem;
+  max-width: 40rem;
 }
 
 //
@@ -72,4 +71,10 @@ header a {
   color: $primary-color-text;
   @include link($primary-color, $primary-color-dark)
 }
+
+//
+//        Components
+//
+#funcbox-comment { @include ph1-to-ph2($breakpoint-small); }
+@include funcbox-comment($font-size-body);
 
