@@ -93,6 +93,14 @@ header a {
 
 .funcbox-textarea:focus {
   border-bottom: thin solid #3F51B5; }
+  .funcbox-textarea:focus::-webkit-input-placeholder {
+    color: #dbdbdb; }
+  .funcbox-textarea:focus:-moz-placeholder {
+    color: #dbdbdb; }
+  .funcbox-textarea:focus::-moz-placeholder {
+    color: #dbdbdb; }
+  .funcbox-textarea:focus:-ms-input-placeholder {
+    color: #dbdbdb; }
 
 .funcbox-textarea, .funcbox-button {
   display: block;
