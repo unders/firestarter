@@ -158,10 +158,16 @@ var View = /** @class */ (function () {
         this.body = new Body();
         this.submit = new Submit();
         this.root = root;
+        this.resetBodySize = this.resetBodySize.bind(this);
     }
     View.prototype.focusBody = function () {
         var el = this.root.querySelector(".funcbox-textarea");
         el.focus();
+    };
+    View.prototype.resetBodySize = function () {
+        var el = this.root.querySelector(".funcbox-textarea");
+        el.style.height = "inherit";
+        el.style.height = el.scrollHeight + "px";
     };
     View.prototype.isValid = function () {
         return this.body.isValid(this.data.body);
@@ -179,6 +185,7 @@ var View = /** @class */ (function () {
         this.data.body = "";
         this.body.setOk();
         this.submit.disable = false;
+        setTimeout(this.resetBodySize, 1);
     };
     return View;
 }());

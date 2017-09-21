@@ -46,11 +46,18 @@ class View {
 
     constructor(root: Element) {
         this.root = root;
+        this.resetBodySize = this.resetBodySize.bind(this);
     }
 
     focusBody() {
         const el = this.root.querySelector(".funcbox-textarea") as HTMLTextAreaElement;
         el.focus();
+    }
+
+    resetBodySize() {
+        const el = this.root.querySelector(".funcbox-textarea") as HTMLTextAreaElement;
+        el.style.height = "inherit";
+        el.style.height = el.scrollHeight + "px";
     }
 
     isValid(): boolean {
@@ -73,6 +80,7 @@ class View {
         this.data.body = "";
         this.body.setOk();
         this.submit.disable = false;
+        setTimeout(this.resetBodySize, 1);
     }
 }
 class Data {
