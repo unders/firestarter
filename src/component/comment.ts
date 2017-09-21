@@ -114,21 +114,22 @@ class Form {
     readonly client: Poster;
     readonly html: (template: TemplateStringsArray, ...args : any[]) => void;
     view: View;
+    bodyHasGrow: boolean = false;
 
     constructor(client: Poster, view: View) {
         this.view = view;
         this.client = client;
         this.html = dom.wire(this);
         this.submit = this.submit.bind(this);
-        this.input = this.input.bind(this);
+        this.saveInput = this.saveInput.bind(this);
         this.removeError = this.removeError.bind(this);
-        // this.grow = this.grow.bind(this);
+        this.grow = this.grow.bind(this);
         // this.shrink = this.shrink.bind(this);
     }
 
-    input(e: Event) {
+    saveInput(e: Event) {
         const input = e.target as HTMLInputElement;
-        this.view.data[input.name] = input.value;
+        this.view.data[input.name] = input.value.trim();
     }
 
     removeError(e: Event) {
@@ -138,17 +139,18 @@ class Form {
         }
     }
 
-    shrink(e: Event) {
-        // const el = e.target as HTMLTextAreaElement;
-        // console.log(e);
-    }
-
     grow(e: Event) {
-        // const el = e.target as HTMLTextAreaElement;
-        //
-        // if (el.scrollHeight > el.clientHeight) {
-        //     el.style.height = el.scrollHeight + "px";
-        // }
+        const el = e.target as HTMLTextAreaElement;
+
+        if (!this.bodyHasGrow && el.scrollHeight > el.clientHeight) {
+            this.bodyHasGrow = true;
+            el.style.height = el.scrollHeight + "px";
+        }
+
+        if (this.bodyHasGrow) {
+            el.style.height = "inherit";
+            el.style.height = el.scrollHeight + "px";
+        }
     }
 
     async submit(e: Event) {
@@ -191,7 +193,7 @@ class Form {
         return this.html`
             <form   class="funcbox-comment-form"
                     onsubmit=${this.submit}
-                    oninput=${this.input}>
+                    oninput=${this.saveInput}>
                 <div class="${['funcbox-comment-group', body.errorKlass].join(' ')}">
                     <textarea   class="funcbox-textarea"
                                 oninput="${this.grow}"
