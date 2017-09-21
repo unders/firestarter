@@ -18,23 +18,24 @@
         <section>
             <div class="max-width">
                 <div id="funcbox-comment">
-                    <form   class="funcbox-comment-form">
-                        <div class="funcbox-comment-group">
-                            <textarea class="funcbox-textarea"
-                                      name='body'
-                                      tabindex="1"
-                                      placeholder="Write a comment"></textarea>
-                            <span class="funcbox-textarea-error">
-                                Please, write something.
-                            </span>
-                        </div>
-                        <button class="funcbox-button" tabindex="2">Send</button>
-                    </form>
+                    <script>
+                        function funcboxLoading() {
+                            var el = document.querySelector(".funcbox-placeholder-text");
+                            el.innerHTML = "Loading form <span class='loading'></span>";
+                        }
+                    </script>
+                    <h3 class="funcbox-comment-heading">Comments</h3>
+                    <div    class="funcbox-placeholder"
+                            onclick="funcboxLoading();">
+                        <span class="funcbox-placeholder-text">
+                            Write a comment...
+                        </span>
+                    </div>
                 </div>
             </div>
         </section>
         <footer></footer>
     </div>
-    <script src="assets/js/bundle.js"></script>
+    <script src="assets/js/bundlex.js"></script>
 </body>
 </html>

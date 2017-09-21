@@ -158,19 +158,9 @@ var View = /** @class */ (function () {
         this.body = new Body();
         this.submit = new Submit();
         this.root = root;
-        this.resetBodySize = this.resetBodySize.bind(this);
     }
-    View.prototype.focusBody = function () {
-        var el = this.root.querySelector(".funcbox-textarea");
-        el.focus();
-    };
-    View.prototype.resetBodySize = function () {
-        var el = this.root.querySelector(".funcbox-textarea");
-        el.style.height = "inherit";
-        el.style.height = el.scrollHeight + "px";
-    };
     View.prototype.isValid = function () {
-        return this.body.isValid(this.data.body);
+        return (this.data.body !== "");
     };
     View.prototype.toJSON = function () {
         return JSON.stringify(this.data);
@@ -183,9 +173,7 @@ var View = /** @class */ (function () {
     };
     View.prototype.reset = function () {
         this.data.body = "";
-        this.body.setOk();
         this.submit.disable = false;
-        setTimeout(this.resetBodySize, 1);
     };
     return View;
 }());
@@ -197,28 +185,9 @@ var Data = /** @class */ (function () {
 }());
 var Body = /** @class */ (function () {
     function Body() {
-        this.errorKlass = "";
         this.errorMsg = "Please, write something.";
         this.placeholder = "Write a comment";
     }
-    Body.prototype.isValid = function (value) {
-        if (value === "") {
-            return this.setError();
-        }
-        else {
-            return this.setOk();
-        }
-    };
-    Body.prototype.setError = function () {
-        this.errorKlass = Body.error;
-        return false;
-    };
-    Body.prototype.setOk = function () {
-        this.errorKlass = Body.ok;
-        return true;
-    };
-    Body.ok = "";
-    Body.error = "error";
     return Body;
 }());
 var Submit = /** @class */ (function () {
@@ -236,30 +205,10 @@ var Form = /** @class */ (function () {
         this.html = dom_1.Dom.wire(this);
         this.submit = this.submit.bind(this);
         this.saveInput = this.saveInput.bind(this);
-        this.removeError = this.removeError.bind(this);
-        this.grow = this.grow.bind(this);
-        // this.shrink = this.shrink.bind(this);
     }
     Form.prototype.saveInput = function (e) {
         var input = e.target;
         this.view.data[input.name] = input.value.trim();
-    };
-    Form.prototype.removeError = function (e) {
-        if (this.view.body.errorKlass !== Body.ok) {
-            this.view.body.errorKlass = Body.ok;
-            this.render();
-        }
-    };
-    Form.prototype.grow = function (e) {
-        var el = e.target;
-        if (!this.bodyHasGrow && el.scrollHeight > el.clientHeight) {
-            this.bodyHasGrow = true;
-            el.style.height = el.scrollHeight + "px";
-        }
-        if (this.bodyHasGrow) {
-            el.style.height = "inherit";
-            el.style.height = el.scrollHeight + "px";
-        }
     };
     Form.prototype.submit = function (e) {
         return __awaiter(this, void 0, void 0, function () {
@@ -273,7 +222,6 @@ var Form = /** @class */ (function () {
                         if (!this.view.isValid()) {
                             this.view.enableSubmit();
                             this.render();
-                            this.view.focusBody();
                             return [2 /*return*/];
                         }
                         req = this.view.toJSON();
@@ -302,7 +250,7 @@ var Form = /** @class */ (function () {
         var data = this.view.data;
         var body = this.view.body;
         var submit = this.view.submit;
-        return (_a = ["\n            <form   class=\"funcbox-comment-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <div class=\"", "\">\n                    <textarea   class=\"funcbox-textarea\"\n                                oninput=\"", "\"\n                                onkeydown=\"", "\"\n                                tabindex=\"1\"\n                                name='body'\n                                placeholder=\"", "\"\n                                value=\"", "\"></textarea>\n                    <span class=\"funcbox-textarea-error\">", "</span>\n                </div>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], _a.raw = ["\n            <form   class=\"funcbox-comment-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <div class=\"", "\">\n                    <textarea   class=\"funcbox-textarea\"\n                                oninput=\"", "\"\n                                onkeydown=\"", "\"\n                                tabindex=\"1\"\n                                name='body'\n                                placeholder=\"", "\"\n                                value=\"", "\"></textarea>\n                    <span class=\"funcbox-textarea-error\">", "</span>\n                </div>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], this.html(_a, this.submit, this.saveInput, ['funcbox-comment-group', body.errorKlass].join(' '), this.grow, this.removeError, body.placeholder, data.body, body.errorMsg, submit.disable, submit.title));
+        return (_a = ["\n            <form   class=\"funcbox-comment-form\"\n                    onsubmit=\"", "\"\n                    oninput=\"", "\">\n                <div class=\"funcbox-comment-group\">\n                    <textarea   class=\"funcbox-textarea\"\n                                tabindex=\"1\"\n                                name='body'\n                                placeholder=\"", "\"\n                                value=\"", "\"></textarea>\n                    <span class=\"funcbox-textarea-error\">", "</span>\n                </div>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], _a.raw = ["\n            <form   class=\"funcbox-comment-form\"\n                    onsubmit=\"", "\"\n                    oninput=\"", "\">\n                <div class=\"funcbox-comment-group\">\n                    <textarea   class=\"funcbox-textarea\"\n                                tabindex=\"1\"\n                                name='body'\n                                placeholder=\"", "\"\n                                value=\"", "\"></textarea>\n                    <span class=\"funcbox-textarea-error\">", "</span>\n                </div>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], this.html(_a, this.submit, this.saveInput, body.placeholder, data.body, body.errorMsg, submit.disable, submit.title));
         var _a;
     };
     return Form;
@@ -312,15 +260,10 @@ var List = /** @class */ (function () {
         this.title = title;
         this.html = dom_1.Dom.wire(this);
     }
-    List.prototype.click = function (e) {
-        console.log(e);
-        console.log(e.target);
-    };
     List.prototype.render = function () {
-        var _this = this;
         return (_a = ["\n            <h3>", "</h3>\n            <ul class=\"comments\">", "\n            </ul>"], _a.raw = ["\n            <h3>", "</h3>\n            <ul class=\"comments\">",
             "\n            </ul>"], this.html(_a, this.title, this.comments.map(function (comment) {
-            return (_a = ["\n                <li onclick=\"", "\">", "</li>"], _a.raw = ["\n                <li onclick=\"", "\">", "</li>"], dom_1.Dom.wire(comment)(_a, _this.click, comment.body));
+            return (_a = ["\n                <li>", "</li>"], _a.raw = ["\n                <li>", "</li>"], dom_1.Dom.wire(comment)(_a, comment.body));
             var _a;
         })));
         var _a;

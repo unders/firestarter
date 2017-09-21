@@ -46,22 +46,10 @@ class View {
 
     constructor(root: Element) {
         this.root = root;
-        this.resetBodySize = this.resetBodySize.bind(this);
-    }
-
-    focusBody() {
-        const el = this.root.querySelector(".funcbox-textarea") as HTMLTextAreaElement;
-        el.focus();
-    }
-
-    resetBodySize() {
-        const el = this.root.querySelector(".funcbox-textarea") as HTMLTextAreaElement;
-        el.style.height = "inherit";
-        el.style.height = el.scrollHeight + "px";
     }
 
     isValid(): boolean {
-        return this.body.isValid(this.data.body);
+        return (this.data.body !== "")
     }
 
     toJSON(): string {
@@ -78,9 +66,7 @@ class View {
 
     reset(): void {
         this.data.body = "";
-        this.body.setOk();
         this.submit.disable = false;
-        setTimeout(this.resetBodySize, 1);
     }
 }
 class Data {
@@ -88,29 +74,8 @@ class Data {
     body: string = "";
 }
 class Body {
-    static readonly ok: string = "";
-    static readonly error: string = "error";
-    errorKlass: string = "";
-    errorMsg: string = "Please, write something.";
-    placeholder: string = "Write a comment";
-
-    isValid(value: string): boolean {
-       if (value === "") {
-           return this.setError();
-       } else {
-           return this.setOk();
-       }
-    }
-
-    setError() {
-        this.errorKlass = Body.error;
-        return false;
-    }
-
-    setOk() {
-        this.errorKlass = Body.ok;
-        return true
-    }
+    readonly errorMsg: string = "Please, write something.";
+    readonly placeholder: string = "Write a comment";
 }
 class Submit {
     readonly title: string = "Send";
@@ -130,35 +95,11 @@ class Form {
         this.html = dom.wire(this);
         this.submit = this.submit.bind(this);
         this.saveInput = this.saveInput.bind(this);
-        this.removeError = this.removeError.bind(this);
-        this.grow = this.grow.bind(this);
-        // this.shrink = this.shrink.bind(this);
     }
 
     saveInput(e: Event) {
         const input = e.target as HTMLInputElement;
         this.view.data[input.name] = input.value.trim();
-    }
-
-    removeError(e: Event) {
-        if (this.view.body.errorKlass !== Body.ok) {
-            this.view.body.errorKlass = Body.ok;
-            this.render();
-        }
-    }
-
-    grow(e: Event) {
-        const el = e.target as HTMLTextAreaElement;
-
-        if (!this.bodyHasGrow && el.scrollHeight > el.clientHeight) {
-            this.bodyHasGrow = true;
-            el.style.height = el.scrollHeight + "px";
-        }
-
-        if (this.bodyHasGrow) {
-            el.style.height = "inherit";
-            el.style.height = el.scrollHeight + "px";
-        }
     }
 
     async submit(e: Event) {
@@ -170,7 +111,6 @@ class Form {
         if(!this.view.isValid()) {
             this.view.enableSubmit();
             this.render();
-            this.view.focusBody();
             return;
         }
         const req = this.view.toJSON();
@@ -200,12 +140,10 @@ class Form {
 
         return this.html`
             <form   class="funcbox-comment-form"
-                    onsubmit=${this.submit}
-                    oninput=${this.saveInput}>
-                <div class="${['funcbox-comment-group', body.errorKlass].join(' ')}">
+                    onsubmit="${this.submit}"
+                    oninput="${this.saveInput}">
+                <div class="funcbox-comment-group">
                     <textarea   class="funcbox-textarea"
-                                oninput="${this.grow}"
-                                onkeydown="${this.removeError}"
                                 tabindex="1"
                                 name='body'
                                 placeholder="${body.placeholder}"
@@ -229,16 +167,11 @@ class List {
         this.html = dom.wire(this);
     }
 
-    click(e: Event) {
-        console.log(e);
-        console.log(e.target);
-    }
-
     render() {
         return this.html`
             <h3>${this.title}</h3>
             <ul class="comments">${this.comments.map( (comment) => dom.wire(comment)`
-                <li onclick="${this.click}">${comment.body}</li>`)}
+                <li>${comment.body}</li>`)}
             </ul>`;
     }
 }
