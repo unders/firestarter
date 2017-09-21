@@ -73,6 +73,12 @@ header a {
       padding-left: 2rem;
       padding-right: 2rem; } }
 
+.funcbox-comment-group.error > .funcbox-textarea {
+  border-bottom: thin solid #ff1744; }
+
+.funcbox-comment-group.error > .funcbox-textarea-error {
+  visibility: visible; }
+
 .funcbox-textarea {
   overflow: hidden;
   outline: none;
@@ -84,12 +90,13 @@ header a {
   border-bottom: thin solid #BDBDBD; }
 
 .funcbox-textarea-error {
+  visibility: hidden;
+  display: block;
   margin-top: 5px;
   margin-bottom: 5px;
-  color: #757575;
+  color: #ff1744;
   height: 30px;
-  font-size: 16px;
-  display: block; }
+  font-size: 16px; }
 
 .funcbox-textarea:focus {
   border-bottom: thin solid #3F51B5; }
@@ -101,6 +108,9 @@ header a {
     color: #dbdbdb; }
   .funcbox-textarea:focus:-ms-input-placeholder {
     color: #dbdbdb; }
+
+.funcbox-textarea:hover {
+  border-bottom: thin solid #303F9F; }
 
 .funcbox-textarea, .funcbox-button {
   display: block;

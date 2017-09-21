@@ -18,14 +18,17 @@
         <section>
             <div class="max-width">
                 <div id="funcbox-comment">
-                    <form   class="funcbox-form">
-                        <textarea class="funcbox-textarea"
-                                  name='body'
-                                  placeholder="Write a comment"></textarea>
-                        <span class="funcbox-textarea-error" style="visibility: hidden;">
-                            Please, write something.
-                        </span>
-                        <button class="funcbox-button">Send</button>
+                    <form   class="funcbox-comment-form">
+                        <div class="funcbox-comment-group">
+                            <textarea class="funcbox-textarea"
+                                      name='body'
+                                      tabindex="1"
+                                      placeholder="Write a comment"></textarea>
+                            <span class="funcbox-textarea-error">
+                                Please, write something.
+                            </span>
+                        </div>
+                        <button class="funcbox-button" tabindex="2">Send</button>
                     </form>
                 </div>
             </div>

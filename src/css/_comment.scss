@@ -1,23 +1,43 @@
 @import "space";
 @import "palette";
+@import "placeholder";
 
-@mixin funcbox-comment($font-size-body, $breakpoint) {
-  #funcbox-comment {
-    @include ph1-to-ph2($breakpoint);
-  }
-  .funcbox-textarea-error {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    color: $secondary-text-color;
-    height: 30px;
-    font-size: 16px;
-    display: block;
+@mixin funcbox-comment($font-size-body) {
+  .funcbox-comment-group.error {
+    &>.funcbox-textarea {
+      border-bottom: thin solid $error-color;
+    }
+    &>.funcbox-textarea-error {
+      visibility: visible;
+    }
   }
   .funcbox-textarea {
+    overflow: hidden;
+    outline: none;
+    resize: none;
+    color: $primary-text-color;
     background: $body-color;
     width: 100%;
     border: none;
     border-bottom: thin solid $divider-color;
+  }
+  .funcbox-textarea-error {
+    visibility: hidden;
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color: $error-color;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  .funcbox-textarea:focus {
+    @include placeholder(lighten($secondary-text-color, 40%));
+    border-bottom: thin solid $primary-color;
+  }
+
+  .funcbox-textarea:hover {
+    border-bottom: thin solid $primary-color-dark;
   }
 
 
@@ -26,4 +46,6 @@
     font-size: $font-size-body;
   }
 }
+
+
 

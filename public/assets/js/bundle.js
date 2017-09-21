@@ -134,7 +134,7 @@ var Component = /** @class */ (function () {
         if (root) {
             this.root = root;
             this.bind = dom_1.Dom.bind(this.root);
-            this.form = new Form(props.client, new View());
+            this.form = new Form(props.client, new View(root));
             this.list = new List(props.listTitle, props.comments);
             this.render();
         }
@@ -153,11 +153,16 @@ var Component = /** @class */ (function () {
 }());
 exports.Component = Component;
 var View = /** @class */ (function () {
-    function View() {
+    function View(root) {
         this.data = new Data();
         this.body = new Body();
         this.submit = new Submit();
+        this.root = root;
     }
+    View.prototype.focusBody = function () {
+        var el = this.root.querySelector(".funcbox-textarea");
+        el.focus();
+    };
     View.prototype.isValid = function () {
         return this.body.isValid(this.data.body);
     };
@@ -185,9 +190,8 @@ var Data = /** @class */ (function () {
 }());
 var Body = /** @class */ (function () {
     function Body() {
-        this.klass = viewState.ok;
-        this.style = viewState.hideError;
-        this.error = "Please, write something.";
+        this.errorKlass = "";
+        this.errorMsg = "Please, write something.";
         this.placeholder = "Write a comment";
     }
     Body.prototype.isValid = function (value) {
@@ -199,15 +203,15 @@ var Body = /** @class */ (function () {
         }
     };
     Body.prototype.setError = function () {
-        this.klass = viewState.error;
-        this.style = viewState.showError;
+        this.errorKlass = Body.error;
         return false;
     };
     Body.prototype.setOk = function () {
-        this.klass = viewState.ok;
-        this.style = viewState.hideError;
+        this.errorKlass = Body.ok;
         return true;
     };
+    Body.ok = "";
+    Body.error = "error";
     return Body;
 }());
 var Submit = /** @class */ (function () {
@@ -217,15 +221,6 @@ var Submit = /** @class */ (function () {
     }
     return Submit;
 }());
-var viewState = /** @class */ (function () {
-    function viewState() {
-    }
-    viewState.hideError = "visibility: hidden;";
-    viewState.showError = "";
-    viewState.error = "error";
-    viewState.ok = "ok";
-    return viewState;
-}());
 var Form = /** @class */ (function () {
     function Form(client, view) {
         this.view = view;
@@ -233,12 +228,19 @@ var Form = /** @class */ (function () {
         this.html = dom_1.Dom.wire(this);
         this.submit = this.submit.bind(this);
         this.input = this.input.bind(this);
-        this.grow = this.grow.bind(this);
-        this.shrink = this.shrink.bind(this);
+        this.removeError = this.removeError.bind(this);
+        // this.grow = this.grow.bind(this);
+        // this.shrink = this.shrink.bind(this);
     }
     Form.prototype.input = function (e) {
         var input = e.target;
         this.view.data[input.name] = input.value;
+    };
+    Form.prototype.removeError = function (e) {
+        if (this.view.body.errorKlass !== Body.ok) {
+            this.view.body.errorKlass = Body.ok;
+            this.render();
+        }
     };
     Form.prototype.shrink = function (e) {
         // const el = e.target as HTMLTextAreaElement;
@@ -263,6 +265,7 @@ var Form = /** @class */ (function () {
                         if (!this.view.isValid()) {
                             this.view.enableSubmit();
                             this.render();
+                            this.view.focusBody();
                             return [2 /*return*/];
                         }
                         req = this.view.toJSON();
@@ -291,7 +294,7 @@ var Form = /** @class */ (function () {
         var data = this.view.data;
         var body = this.view.body;
         var submit = this.view.submit;
-        return (_a = ["\n            <form   class=\"funcbox-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <textarea   class=\"", "\"\n                            oninput=\"", "\"\n                            onkeydown=\"", "\"\n                            tabindex=\"1\"\n                            name='body'\n                            placeholder=\"", "\"\n                            value=\"", "\"></textarea>\n                </br>\n                <span class=\"funcbox-textarea-error\" style=\"", "\">\n                    ", "\n                </span>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], _a.raw = ["\n            <form   class=\"funcbox-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <textarea   class=\"", "\"\n                            oninput=\"", "\"\n                            onkeydown=\"", "\"\n                            tabindex=\"1\"\n                            name='body'\n                            placeholder=\"", "\"\n                            value=\"", "\"></textarea>\n                </br>\n                <span class=\"funcbox-textarea-error\" style=\"", "\">\n                    ", "\n                </span>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], this.html(_a, this.submit, this.input, ['funcbox-textarea', body.klass].join(' '), this.grow, this.shrink, body.placeholder, data.body, body.style, body.error, submit.disable, submit.title));
+        return (_a = ["\n            <form   class=\"funcbox-comment-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <div class=\"", "\">\n                    <textarea   class=\"funcbox-textarea\"\n                                oninput=\"", "\"\n                                onkeydown=\"", "\"\n                                tabindex=\"1\"\n                                name='body'\n                                placeholder=\"", "\"\n                                value=\"", "\"></textarea>\n                    <span class=\"funcbox-textarea-error\">", "</span>\n                </div>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], _a.raw = ["\n            <form   class=\"funcbox-comment-form\"\n                    onsubmit=", "\n                    oninput=", ">\n                <div class=\"", "\">\n                    <textarea   class=\"funcbox-textarea\"\n                                oninput=\"", "\"\n                                onkeydown=\"", "\"\n                                tabindex=\"1\"\n                                name='body'\n                                placeholder=\"", "\"\n                                value=\"", "\"></textarea>\n                    <span class=\"funcbox-textarea-error\">", "</span>\n                </div>\n                <button class=\"funcbox-button\"\n                        tabindex=\"2\"\n                        disabled=", ">", "</button>\n            </form>"], this.html(_a, this.submit, this.input, ['funcbox-comment-group', body.errorKlass].join(' '), this.grow, this.removeError, body.placeholder, data.body, body.errorMsg, submit.disable, submit.title));
         var _a;
     };
     return Form;

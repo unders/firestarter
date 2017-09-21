@@ -21,7 +21,7 @@ export class Component {
         if (root) {
             this.root = root;
             this.bind = dom.bind(this.root);
-            this.form = new Form(props.client, new View());
+            this.form = new Form(props.client, new View(root));
             this.list = new List(props.listTitle, props.comments);
 
             this.render();
@@ -39,9 +39,19 @@ export class Component {
 }
 
 class View {
+    root: Element;
     data: Data = new Data();
     body: Body = new Body();
     submit: Submit = new Submit();
+
+    constructor(root: Element) {
+        this.root = root;
+    }
+
+    focusBody() {
+        const el = this.root.querySelector(".funcbox-textarea") as HTMLTextAreaElement;
+        el.focus();
+    }
 
     isValid(): boolean {
         return this.body.isValid(this.data.body);
@@ -70,10 +80,11 @@ class Data {
     body: string = "";
 }
 class Body {
-    klass: string = viewState.ok;
-    style: string = viewState.hideError;
-    error: string = "Please write something...";
-    placeholder: string = "write a comment";
+    static readonly ok: string = "";
+    static readonly error: string = "error";
+    errorKlass: string = "";
+    errorMsg: string = "Please, write something.";
+    placeholder: string = "Write a comment";
 
     isValid(value: string): boolean {
        if (value === "") {
@@ -84,14 +95,12 @@ class Body {
     }
 
     setError() {
-        this.klass = viewState.error;
-        this.style = viewState.showError;
+        this.errorKlass = Body.error;
         return false;
     }
 
     setOk() {
-        this.klass = viewState.ok;
-        this.style = viewState.hideError;
+        this.errorKlass = Body.ok;
         return true
     }
 }
@@ -100,12 +109,6 @@ class Submit {
     disable: boolean = false;
 }
 
-class viewState {
-    static readonly hideError: string = "visibility: hidden;";
-    static readonly showError: string = "";
-    static readonly error: string = "error";
-    static readonly ok: string = "ok";
-}
 
 class Form {
     readonly client: Poster;
@@ -118,11 +121,34 @@ class Form {
         this.html = dom.wire(this);
         this.submit = this.submit.bind(this);
         this.input = this.input.bind(this);
+        this.removeError = this.removeError.bind(this);
+        // this.grow = this.grow.bind(this);
+        // this.shrink = this.shrink.bind(this);
     }
 
     input(e: Event) {
         const input = e.target as HTMLInputElement;
         this.view.data[input.name] = input.value;
+    }
+
+    removeError(e: Event) {
+        if (this.view.body.errorKlass !== Body.ok) {
+            this.view.body.errorKlass = Body.ok;
+            this.render();
+        }
+    }
+
+    shrink(e: Event) {
+        // const el = e.target as HTMLTextAreaElement;
+        // console.log(e);
+    }
+
+    grow(e: Event) {
+        // const el = e.target as HTMLTextAreaElement;
+        //
+        // if (el.scrollHeight > el.clientHeight) {
+        //     el.style.height = el.scrollHeight + "px";
+        // }
     }
 
     async submit(e: Event) {
@@ -134,6 +160,7 @@ class Form {
         if(!this.view.isValid()) {
             this.view.enableSubmit();
             this.render();
+            this.view.focusBody();
             return;
         }
         const req = this.view.toJSON();
@@ -162,20 +189,21 @@ class Form {
         const submit = this.view.submit;
 
         return this.html`
-            <form   class="funcbox-form"
-                    onsubmit="${this.submit}"
+            <form   class="funcbox-comment-form"
+                    onsubmit=${this.submit}
                     oninput=${this.input}>
-                <textarea   class="${['funcbox-textarea', body.klass].join(' ')}"
-                            name='body'
-                            placeholder="${body.placeholder}"
-                            cols="50"
-                            value="${data.body}"
-                            rows="5"></textarea>
-                </br>
-                <span class="funcbox-textarea-error" style="${body.style}">
-                    ${body.error}
-                </span>
+                <div class="${['funcbox-comment-group', body.errorKlass].join(' ')}">
+                    <textarea   class="funcbox-textarea"
+                                oninput="${this.grow}"
+                                onkeydown="${this.removeError}"
+                                tabindex="1"
+                                name='body'
+                                placeholder="${body.placeholder}"
+                                value="${data.body}"></textarea>
+                    <span class="funcbox-textarea-error">${body.errorMsg}</span>
+                </div>
                 <button class="funcbox-button"
+                        tabindex="2"
                         disabled=${submit.disable}>${submit.title}</button>
             </form>`;
     }
