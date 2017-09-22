@@ -1,36 +1,43 @@
-import { Comment } from "../data/comment"
+import { CSS as css } from '../data/css';
+import { IState, State } from "../data/state"
+import { Comment, CommentFormWidget } from "../data/comment"
 import { Poster} from "../client/client"
 import { Dom as dom } from "../dom/dom"
 
-export interface Props {
+interface Props {
     root: string;
-    listTitle: string;
+    state: IState
     client: Poster;
     comments: Comment[];
 }
 
 export class Component {
-    root: Element;
-    form: Form;
-    list: List;
-    bind: (template: TemplateStringsArray, ...args : any[]) => void;
+    readonly root: Element;
+    readonly state: IState;
+    readonly form: Form;
+    readonly list: List;
+    html: (template: TemplateStringsArray, ...args : any[]) => void;
 
     constructor(props: Props) {
         const root = document.querySelector(props.root);
 
         if (root) {
             this.root = root;
-            this.bind = dom.bind(this.root);
-            this.form = new Form(props.client, new View(root));
-            this.list = new List(props.listTitle, props.comments);
-
-            this.render();
+            this.html = dom.bind(this.root);
+            this.form = new Form(props.client, props.state, root);
+            this.list = new List(props.comments);
+            this.state = props.state;
         }
+    }
+
+    onStateChange(): void {
+        this.form.onStateChange();
+        // this.list.onStateChange();
     }
 
     render() {
         if (this.root) {
-            this.bind`${[
+            this.html`${[
                 this.form.render()
                 // this.list.render()
             ]}`;
@@ -38,138 +45,181 @@ export class Component {
     }
 }
 
-class View {
-    root: Element;
-    data: Data = new Data();
-    body: Body = new Body();
-    submit: Submit = new Submit();
-
-    constructor(root: Element) {
-        this.root = root;
-    }
-
-    isValid(): boolean {
-        return (this.data.body !== "")
-    }
-
-    toJSON(): string {
-        return JSON.stringify(this.data);
-    }
-
-    disableSubmit(): void {
-        this.submit.disable = true;
-    }
-
-    enableSubmit(): void {
-        this.submit.disable = false;
-    }
-
-    reset(): void {
-        this.data.body = "";
-        this.submit.disable = false;
-    }
-}
-class Data {
-    [key: string]: string;
-    body: string = "";
-}
-class Body {
-    readonly errorMsg: string = "Please, write something.";
-    readonly placeholder: string = "Write a comment";
-}
-class Submit {
-    readonly title: string = "Send";
-    disable: boolean = false;
-}
-
 
 class Form {
+    readonly root: Element;
+    readonly state: IState;
     readonly client: Poster;
     readonly html: (template: TemplateStringsArray, ...args : any[]) => void;
-    view: View;
-    bodyHasGrow: boolean = false;
+    readonly widget: CommentFormWidget;
 
-    constructor(client: Poster, view: View) {
-        this.view = view;
-        this.client = client;
+    constructor(client: Poster, state: IState, root: Element) {
+        this.root = root;
         this.html = dom.wire(this);
-        this.submit = this.submit.bind(this);
+        this.client = client;
+        this.state = state;
+        this.widget = state.getState().commentFormWidget;
+        this.showForm = this.showForm.bind(this);
+        this.hideForm = this.hideForm.bind(this);
         this.saveInput = this.saveInput.bind(this);
+        this.removeError = this.removeError.bind(this);
+        this.publish = this.publish.bind(this);
+    }
+
+    onStateChange(): void {
+        /* no-op: this class don't depend on external state changes */
+        console.log("data: ", this.widget.data.body);
+    }
+
+    removeError() {
+        if (this.widget.form.klass !== css.empty) {
+            const callback = (s: State): any => {
+                const w = s.commentFormWidget;
+                w.form.klass = css.empty;
+            };
+            this.state.setState(callback);
+        }
+    }
+
+    focus() {
+        const el = this.root.querySelector(".funcbox-comment-textarea");
+        (el as HTMLTextAreaElement).focus();
+    }
+
+    showForm(e: Event) {
+        const callback = (s: State): any => {
+            const w = s.commentFormWidget;
+            w.placeholder.klass = css.hide;
+            w.form.klass = css.show;
+        };
+
+        this.state.setState(callback);
+        this.focus();
+    }
+
+
+    hideForm(e: Event) {
+        e.preventDefault();
+
+        const callback = (s: State): any => {
+            const w = s.commentFormWidget;
+            w.placeholder.klass = css.show;
+            w.form.klass = css.hide;
+            w.submit.disable = false;
+            w.data.body = "";
+        };
+
+        this.state.setState(callback);
     }
 
     saveInput(e: Event) {
         const input = e.target as HTMLInputElement;
-        this.view.data[input.name] = input.value.trim();
+        const callback = (s: State): any => {
+            const w = s.commentFormWidget;
+            w.data[input.name] = input.value.trim();
+        };
+
+        this.state.setState(callback);
     }
 
-    async submit(e: Event) {
+    disableSubmit() {
+        const callback = (s: State): any => {
+            const w = s.commentFormWidget;
+            w.submit.disable = true;
+        };
+        this.state.setState(callback);
+    }
+
+    enableSubmit() {
+        const callback = (s: State): any => {
+            const w = s.commentFormWidget;
+            w.submit.disable = false;
+        };
+        this.state.setState(callback);
+    }
+
+    setError() {
+        const callback = (s: State): any => {
+            const w = s.commentFormWidget;
+            w.submit.disable = false;
+            w.form.klass = css.error;
+        };
+        this.state.setState(callback);
+        this.focus();
+    }
+
+    isValid(): boolean {
+        return (this.widget.data.body !== "")
+    }
+
+    async publish(e: Event) {
         e.preventDefault();
 
-        this.view.disableSubmit();
-        this.render();
-
-        if(!this.view.isValid()) {
-            this.view.enableSubmit();
-            this.render();
-            return;
+        //this.disableSubmit();
+        if (!this.isValid()) {
+            this.setError();
+            return
         }
-        const req = this.view.toJSON();
-        this.view.reset();
-        this.render();
+
+        // const req = this.view.toJSON();
+        // this.view.reset();
+        // this.render();
 
         // animate a fast add at the top of list...
 
-        const {json, err} = await this.client.post(req);
-        if (err) {
-            // animate and replace list item with error message
-            if (err.code == 400) {
-
-            }
-            console.log(err.code, err.status, err.message, err.value);
-        } else {
-            // resolve optimistic update
-            // update store.
-            console.log("json: ", json);
-        }
+        // const {json, err} = await this.client.post(req);
+        // if (err) {
+        //     // animate and replace list item with error message
+        //     if (err.code == 400) {
+        //
+        //     }
+        //     console.log(err.code, err.status, err.message, err.value);
+        // } else {
+        //     // resolve optimistic update
+        //     // update store.
+        //     console.log("json: ", json);
+        // }
     }
 
     render() {
-        const data = this.view.data;
-        const body = this.view.body;
-        const submit = this.view.submit;
+        const w = this.widget;
 
         return this.html`
-            <form   class="funcbox-comment-form"
-                    onsubmit="${this.submit}"
-                    oninput="${this.saveInput}">
-                <div class="funcbox-comment-group">
-                    <textarea   class="funcbox-textarea"
-                                tabindex="1"
-                                name='body'
-                                placeholder="${body.placeholder}"
-                                value="${data.body}"></textarea>
-                    <span class="funcbox-textarea-error">${body.errorMsg}</span>
-                </div>
-                <button class="funcbox-button"
-                        tabindex="2"
-                        disabled=${submit.disable}>${submit.title}</button>
-            </form>`;
+                    <h3 class="funcbox-comment-heading">Comments</h3>
+                    <div    class="${['funcbox-placeholder', w.placeholder.klass].join(' ')}"
+                            onclick="${this.showForm}">
+                        <span class="funcbox-placeholder-text">
+                            Write a comment...
+                        </span>
+                    </div>
+                    <form   class="${['funcbox-comment-form', w.form.klass].join(' ')}"
+                            onsubmit="${this.publish}"
+                            oninput=${this.saveInput}>
+                        <textarea   class="funcbox-comment-textarea"
+                                    name="body"
+                                    oninput="${this.removeError}"
+                                    value=${w.data.body}
+                                    placeholder="Write a comment..."></textarea>
+                        <div class="funcbox-comment-footer">
+                            <button class="funcbox-comment-submit"
+                                    onclick=${this.hideForm}>Cancel</button>
+                            <button class="funcbox-comment-submit publish"
+                                    disabled="${w.submit.disable}">Publish</button>
+                        </div>
+                    </form>`;
     }
 }
 
 class List {
-    title: string;
     comments: Comment[];
     html: (template: TemplateStringsArray, ...args : any[]) => void;
 
-    constructor(title: string, comments: Comment[]) {
-        this.title = title;
+    constructor(comments: Comment[]) {
         this.html = dom.wire(this);
     }
 
     render() {
         return this.html`
-            <h3>${this.title}</h3>
             <ul class="comments">${this.comments.map( (comment) => dom.wire(comment)`
                 <li>${comment.body}</li>`)}
             </ul>`;

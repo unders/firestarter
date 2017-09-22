@@ -101,20 +101,110 @@ header a {
   color: #757575; }
 
 .funcbox-placeholder {
-  padding-left: 20px;
+  font-size: 20px;
+  height: 60px;
+  padding-right: 20px;
+  padding-left: 20px; }
+
+.funcbox-placeholder, .funcbox-comment-form {
   background: #FFFFFF;
   color: #757575;
-  height: 60px;
   border: 1px solid rgba(0, 0, 0, 0.09);
   border-radius: 3px;
   display: flex;
   align-items: center;
   cursor: text; }
 
-.funcbox-placeholder:hover {
-  box-shadow: 2px 2px 8px 0px rgba(0, 0, 0, 0.2); }
+.funcbox-comment-form {
+  justify-content: space-between;
+  align-items: stretch;
+  flex-direction: column; }
 
-.funcbox-placeholder-text.hide {
+.funcbox-placeholder.hide {
   display: none; }
+
+.funcbox-comment-form.hide {
+  display: none; }
+
+.funcbox-comment-textarea {
+  padding: 20px 20px 0 20px;
+  height: 210px;
+  font-size: 18px;
+  outline: none;
+  resize: none;
+  border: none; }
+  .funcbox-comment-textarea::-webkit-input-placeholder {
+    color: #a8a8a8; }
+  .funcbox-comment-textarea:-moz-placeholder {
+    color: #a8a8a8; }
+  .funcbox-comment-textarea::-moz-placeholder {
+    color: #a8a8a8; }
+  .funcbox-comment-textarea:-ms-input-placeholder {
+    color: #a8a8a8; }
+
+.error .funcbox-comment-textarea::-webkit-input-placeholder {
+  color: #ff7d96; }
+
+.error .funcbox-comment-textarea:-moz-placeholder {
+  color: #ff7d96; }
+
+.error .funcbox-comment-textarea::-moz-placeholder {
+  color: #ff7d96; }
+
+.error .funcbox-comment-textarea:-ms-input-placeholder {
+  color: #ff7d96; }
+
+.funcbox-comment-footer {
+  background: #fafafa;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; }
+
+.funcbox-comment-submit {
+  color: #a8a8a8;
+  background: #fafafa;
+  border: none;
+  text-transform: uppercase;
+  margin-left: 10px;
+  font-size: 16px;
+  padding: 10px;
+  cursor: pointer;
+  outline: none; }
+
+.funcbox-comment-submit:focus {
+  background: #f2f2f2; }
+
+.funcbox-comment-submit:active {
+  background: #f2f2f2; }
+
+.funcbox-comment-submit.publish {
+  color: #448AFF;
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0); }
+  .funcbox-comment-submit.publish:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+    background-repeat: no-repeat;
+    background-position: 50%;
+    transform: scale(10, 10);
+    opacity: 0;
+    transition: transform .2s, opacity 1s; }
+  .funcbox-comment-submit.publish:active:after {
+    transform: scale(0, 0);
+    opacity: .2;
+    transition: 0s; }
+
+.funcbox-comment-submit:hover {
+  background: #ededed; }
 
 /*# sourceMappingURL=main.css.map */

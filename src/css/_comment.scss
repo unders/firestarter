@@ -1,3 +1,4 @@
+@import "ripple";
 @import "space";
 @import "palette";
 @import "placeholder";
@@ -9,23 +10,87 @@
     color: $secondary-text-color;
   }
   .funcbox-placeholder {
+    font-size: 20px;
+    height: 60px;
+    padding-right: 20px;
     padding-left: 20px;
+  }
+  .funcbox-placeholder, .funcbox-comment-form {
     background: $primary-color-text;
     color: $secondary-text-color;
-    height: 60px;
     border: 1px solid rgba(0,0,0,.09);
     border-radius: 3px;
     display: flex;
     align-items: center;
     cursor: text;
   }
-
-  .funcbox-placeholder:hover {
-    box-shadow: 2px 2px 8px 0px rgba( 0, 0, 0, 0.2 );
+  .funcbox-comment-form {
+    justify-content: space-between;
+    align-items: stretch;
+    flex-direction: column;
   }
 
-  .funcbox-placeholder-text.hide {
+  .funcbox-placeholder.hide {
     display: none;
+  }
+
+  .funcbox-comment-form.hide {
+    display: none;
+  }
+
+  .funcbox-comment-textarea {
+    padding: 20px 20px 0 20px;
+    height: 210px;
+    font-size: 18px;
+    outline: none;
+    resize: none;
+    //overflow: hidden;
+    border: none;
+
+    @include placeholder(lighten($secondary-text-color, 20%))
+  }
+
+  .error .funcbox-comment-textarea {
+    @include placeholder(lighten($error-color, 20%));
+  }
+
+  .funcbox-comment-footer {
+    background: $body-color;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  .funcbox-comment-submit {
+    color: lighten($secondary-text-color, 20%);
+    background: $body-color;
+    border: none;
+    text-transform: uppercase;
+    margin-left: 10px;
+    font-size: 16px;
+    padding: 10px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .funcbox-comment-submit:focus {
+    background: darken($primary-color-text, 5);
+  }
+
+  .funcbox-comment-submit:active {
+    background: darken($primary-color-text, 5);
+  }
+
+  .funcbox-comment-submit.publish {
+    color: $accent-color;
+    @include ripple();
+  }
+
+  .funcbox-comment-submit:hover {
+    background: darken($primary-color-text, 7);
   }
 
 }
