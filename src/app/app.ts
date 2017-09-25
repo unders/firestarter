@@ -1,19 +1,18 @@
-import { Poster } from "../client/client"
 import { State } from "../data/state"
 import * as comment from "../component/comment"
+import { CommentService } from "../service/comment";
 
 export class App {
-    state: State;
-    comment: comment.Component;
+    readonly state: State;
+    readonly comment: comment.Component;
 
-    constructor(client: Poster) {
+    constructor(commentService: CommentService) {
         this.state = State.init();
-
+        commentService.init(this);
         this.comment = new comment.Component({
                 root: "#funcbox-comment",
-                state: this,
-                client: client,
-                comments:  [{body: "This is the body text. Very cool"}],
+                commentService: commentService,
+                state: this
             });
     }
 

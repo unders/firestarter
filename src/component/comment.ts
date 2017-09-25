@@ -1,19 +1,20 @@
 import { CSS as css } from '../data/css';
 import { IState, State } from "../data/state"
-import { Comment, CommentFormWidget } from "../data/comment"
-import { Poster} from "../client/client"
+import {
+    Comment,
+    CommentFormWidget,
+    CommentListWidget } from "../data/comment"
 import { Dom as dom } from "../dom/dom"
+import { CommentService } from "../service/comment";
 
 interface Props {
     root: string;
     state: IState
-    client: Poster;
-    comments: Comment[];
+    commentService: CommentService;
 }
 
 export class Component {
     readonly root: Element;
-    readonly state: IState;
     readonly form: Form;
     readonly list: List;
     html: (template: TemplateStringsArray, ...args : any[]) => void;
@@ -24,22 +25,21 @@ export class Component {
         if (root) {
             this.root = root;
             this.html = dom.bind(this.root);
-            this.form = new Form(props.client, props.state, root);
-            this.list = new List(props.comments);
-            this.state = props.state;
+            this.form = new Form(root, props.state, props.commentService);
+            this.list = new List(props.state);
         }
     }
 
     onStateChange(): void {
         this.form.onStateChange();
-        // this.list.onStateChange();
+        this.list.onStateChange();
     }
 
     render() {
         if (this.root) {
             this.html`${[
-                this.form.render()
-                // this.list.render()
+                this.form.render(),
+                this.list.render()
             ]}`;
         }
     }
@@ -49,22 +49,22 @@ export class Component {
 class Form {
     readonly root: Element;
     readonly state: IState;
-    readonly client: Poster;
-    readonly html: (template: TemplateStringsArray, ...args : any[]) => void;
+    readonly service: CommentService;
     readonly widget: CommentFormWidget;
+    readonly html: (template: TemplateStringsArray, ...args : any[]) => void;
 
-    constructor(client: Poster, state: IState, root: Element) {
+    constructor(root: Element, state: IState, service: CommentService) {
         this.root = root;
         this.html = dom.wire(this);
-        this.client = client;
+        this.service = service;
         this.state = state;
         this.widget = state.getState().commentFormWidget;
         this.showForm = this.showForm.bind(this);
-        this.cancelForm = this.cancelForm.bind(this);
         this.hideForm = this.hideForm.bind(this);
-        this.saveInput = this.saveInput.bind(this);
         this.removeError = this.removeError.bind(this);
+        this.saveInput = this.saveInput.bind(this);
         this.publish = this.publish.bind(this);
+        this.cancelForm = this.cancelForm.bind(this);
     }
 
     onStateChange(): void { /* no-op: this class don't depend on external state changes */ }
@@ -95,7 +95,6 @@ class Form {
         this.state.setState(callback);
         this.focus();
     }
-
 
     cancelForm(e: Event) {
         e.preventDefault();
@@ -142,15 +141,10 @@ class Form {
         this.focus();
     }
 
-    dataAndJSON(): [Comment, string] {
-        const c = new Comment(this.widget.data.body);
-        const json = JSON.stringify(this.widget.data);
-        return [c, json]
-    }
-
     isValid(): boolean {
         return (this.widget.data.body !== "")
     }
+
 
     async publish(e: Event) {
         e.preventDefault();
@@ -160,24 +154,10 @@ class Form {
             this.setError();
             return
         }
-        const [comment, req] = this.dataAndJSON();
+
+        const comment = this.widget.toComment();
         setTimeout(this.hideForm, 500);
-
-        console.log(comment, req);
-
-        //  add to comments state list submitted
-
-         const {json, err} = await this.client.post(req);
-         if (err) {
-             // animate and replace list item with error message
-             if (err.code == 400) {
-            }
-             console.log(err.code, err.status, err.message, err.value);
-         } else {
-        //     // resolve optimistic update
-        //     // update store.
-             console.log("json: ", json);
-         }
+        this.service.submitComment(comment, 500*2);
     }
 
     render() {
@@ -210,17 +190,26 @@ class Form {
 }
 
 class List {
-    comments: Comment[];
+    state: IState;
+    widget: CommentListWidget;
     html: (template: TemplateStringsArray, ...args : any[]) => void;
 
-    constructor(comments: Comment[]) {
+    constructor(state: IState) {
         this.html = dom.wire(this);
+        this.state = state;
+        this.widget = state.getState().commentListWidget;
+    }
+
+    onStateChange(): void {
+        console.log("Len: ", this.widget.comments.length)
     }
 
     render() {
+        const comments = this.widget.comments;
+
         return this.html`
-            <ul class="comments">${this.comments.map( (comment) => dom.wire(comment)`
-                <li>${comment.body}</li>`)}
+            <ul class="comments">${comments.map( (comment) => dom.wire(comment)`
+                <li>${comment.data.body}</li>`)}
             </ul>`;
     }
 }

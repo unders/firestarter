@@ -18,6 +18,22 @@ export class CommentError {
     }
 }
 
+//
+// Comment Widgets - Form and List
+//
+
+export class CommentListItem {
+    readonly data: Comment;
+
+    constructor(comment: Comment) {
+        this.data = comment
+    }
+}
+
+export class CommentListWidget {
+    comments: CommentListItem[] = [];
+}
+
 export class CommentFormWidget {
     placeholder: CommentFormPlaceholder;
     form: CommentForm;
@@ -29,6 +45,10 @@ export class CommentFormWidget {
         this.form = new CommentForm();
         this.submit = new CommentFormSubmit(submitText);
         this.data = new CommentFormData();
+    }
+
+    toComment(): Comment {
+        return new Comment(this.data.body);
     }
 }
 

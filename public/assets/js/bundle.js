@@ -86,6 +86,23 @@ var CommentError = /** @class */ (function () {
     return CommentError;
 }());
 exports.CommentError = CommentError;
+//
+// Comment Widgets - Form and List
+//
+var CommentListItem = /** @class */ (function () {
+    function CommentListItem(comment) {
+        this.data = comment;
+    }
+    return CommentListItem;
+}());
+exports.CommentListItem = CommentListItem;
+var CommentListWidget = /** @class */ (function () {
+    function CommentListWidget() {
+        this.comments = [];
+    }
+    return CommentListWidget;
+}());
+exports.CommentListWidget = CommentListWidget;
 var CommentFormWidget = /** @class */ (function () {
     function CommentFormWidget(submitText, placeholderText) {
         this.placeholder = new CommentFormPlaceholder(placeholderText);
@@ -93,6 +110,9 @@ var CommentFormWidget = /** @class */ (function () {
         this.submit = new CommentFormSubmit(submitText);
         this.data = new CommentFormData();
     }
+    CommentFormWidget.prototype.toComment = function () {
+        return new Comment(this.data.body);
+    };
     return CommentFormWidget;
 }());
 exports.CommentFormWidget = CommentFormWidget;
@@ -155,10 +175,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = __webpack_require__(3);
 var client_1 = __webpack_require__(8);
 var env_1 = __webpack_require__(10);
+var comment_1 = __webpack_require__(11);
 var main = function () {
     var env = new env_1.Env("dev");
     var client = client_1.Client.make(env);
-    var app = new app_1.App(client);
+    var commentService = new comment_1.CommentService(client, funcboxComments());
+    var app = new app_1.App(commentService);
     app.render();
 };
 main();
@@ -174,13 +196,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var state_1 = __webpack_require__(4);
 var comment = __webpack_require__(5);
 var App = /** @class */ (function () {
-    function App(client) {
+    function App(commentService) {
         this.state = state_1.State.init();
+        commentService.init(this);
         this.comment = new comment.Component({
             root: "#funcbox-comment",
-            state: this,
-            client: client,
-            comments: [{ body: "This is the body text. Very cool" }],
+            commentService: commentService,
+            state: this
         });
     }
     App.prototype.setState = function (callback) {
@@ -213,6 +235,7 @@ var State = /** @class */ (function () {
     State.init = function () {
         var s = new State();
         s.commentFormWidget = new comment_1.CommentFormWidget("Publish", "Write a comment...");
+        s.commentListWidget = new comment_1.CommentListWidget();
         return s;
     };
     return State;
@@ -263,7 +286,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var css_1 = __webpack_require__(1);
-var comment_1 = __webpack_require__(0);
 var dom_1 = __webpack_require__(6);
 var Component = /** @class */ (function () {
     function Component(props) {
@@ -271,21 +293,20 @@ var Component = /** @class */ (function () {
         if (root) {
             this.root = root;
             this.html = dom_1.Dom.bind(this.root);
-            this.form = new Form(props.client, props.state, root);
-            this.list = new List(props.comments);
-            this.state = props.state;
+            this.form = new Form(root, props.state, props.commentService);
+            this.list = new List(props.state);
         }
     }
     Component.prototype.onStateChange = function () {
         this.form.onStateChange();
-        // this.list.onStateChange();
+        this.list.onStateChange();
     };
     Component.prototype.render = function () {
         if (this.root) {
             (_a = ["", ""], _a.raw = ["",
                 ""], this.html(_a, [
-                this.form.render()
-                // this.list.render()
+                this.form.render(),
+                this.list.render()
             ]));
         }
         var _a;
@@ -294,18 +315,18 @@ var Component = /** @class */ (function () {
 }());
 exports.Component = Component;
 var Form = /** @class */ (function () {
-    function Form(client, state, root) {
+    function Form(root, state, service) {
         this.root = root;
         this.html = dom_1.Dom.wire(this);
-        this.client = client;
+        this.service = service;
         this.state = state;
         this.widget = state.getState().commentFormWidget;
         this.showForm = this.showForm.bind(this);
-        this.cancelForm = this.cancelForm.bind(this);
         this.hideForm = this.hideForm.bind(this);
-        this.saveInput = this.saveInput.bind(this);
         this.removeError = this.removeError.bind(this);
+        this.saveInput = this.saveInput.bind(this);
         this.publish = this.publish.bind(this);
+        this.cancelForm = this.cancelForm.bind(this);
     }
     Form.prototype.onStateChange = function () { };
     Form.prototype.removeError = function () {
@@ -369,45 +390,23 @@ var Form = /** @class */ (function () {
         this.state.setState(callback);
         this.focus();
     };
-    Form.prototype.dataAndJSON = function () {
-        var c = new comment_1.Comment(this.widget.data.body);
-        var json = JSON.stringify(this.widget.data);
-        return [c, json];
-    };
     Form.prototype.isValid = function () {
         return (this.widget.data.body !== "");
     };
     Form.prototype.publish = function (e) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, comment, req, _b, json, err;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
-                    case 0:
-                        e.preventDefault();
-                        this.disableSubmit();
-                        if (!this.isValid()) {
-                            this.setError();
-                            return [2 /*return*/];
-                        }
-                        _a = this.dataAndJSON(), comment = _a[0], req = _a[1];
-                        setTimeout(this.hideForm, 500);
-                        console.log(comment, req);
-                        return [4 /*yield*/, this.client.post(req)];
-                    case 1:
-                        _b = _c.sent(), json = _b.json, err = _b.err;
-                        if (err) {
-                            // animate and replace list item with error message
-                            if (err.code == 400) {
-                            }
-                            console.log(err.code, err.status, err.message, err.value);
-                        }
-                        else {
-                            //     // resolve optimistic update
-                            //     // update store.
-                            console.log("json: ", json);
-                        }
-                        return [2 /*return*/];
+            var comment;
+            return __generator(this, function (_a) {
+                e.preventDefault();
+                this.disableSubmit();
+                if (!this.isValid()) {
+                    this.setError();
+                    return [2 /*return*/];
                 }
+                comment = this.widget.toComment();
+                setTimeout(this.hideForm, 500);
+                this.service.submitComment(comment, 500 * 2);
+                return [2 /*return*/];
             });
         });
     };
@@ -419,13 +418,19 @@ var Form = /** @class */ (function () {
     return Form;
 }());
 var List = /** @class */ (function () {
-    function List(comments) {
+    function List(state) {
         this.html = dom_1.Dom.wire(this);
+        this.state = state;
+        this.widget = state.getState().commentListWidget;
     }
+    List.prototype.onStateChange = function () {
+        console.log("Len: ", this.widget.comments.length);
+    };
     List.prototype.render = function () {
+        var comments = this.widget.comments;
         return (_a = ["\n            <ul class=\"comments\">", "\n            </ul>"], _a.raw = ["\n            <ul class=\"comments\">",
-            "\n            </ul>"], this.html(_a, this.comments.map(function (comment) {
-            return (_a = ["\n                <li>", "</li>"], _a.raw = ["\n                <li>", "</li>"], dom_1.Dom.wire(comment)(_a, comment.body));
+            "\n            </ul>"], this.html(_a, comments.map(function (comment) {
+            return (_a = ["\n                <li>", "</li>"], _a.raw = ["\n                <li>", "</li>"], dom_1.Dom.wire(comment)(_a, comment.data.body));
             var _a;
         })));
         var _a;
@@ -656,6 +661,44 @@ var Env = /** @class */ (function () {
     return Env;
 }());
 exports.Env = Env;
+
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var comment_1 = __webpack_require__(0);
+var CommentService = /** @class */ (function () {
+    function CommentService(client, comments) {
+        this.client = client;
+        this.comments = comments;
+    }
+    CommentService.prototype.init = function (state) {
+        this._state = state;
+        var listItems = [];
+        this.comments.forEach(function (comment) {
+            var listItem = new comment_1.CommentListItem(comment);
+            listItems.push(listItem);
+        });
+        this._state.getState().commentListWidget.comments = listItems;
+    };
+    CommentService.prototype.submitComment = function (comment, timeout) {
+        var _this = this;
+        var listItem = new comment_1.CommentListItem(comment);
+        var callback = function (state) {
+            state.commentListWidget.comments.unshift(listItem);
+        };
+        var add = function () {
+            _this._state.setState(callback);
+        };
+        setTimeout(add, timeout);
+    };
+    return CommentService;
+}());
+exports.CommentService = CommentService;
 
 
 /***/ })
