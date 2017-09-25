@@ -1,7 +1,7 @@
 import { Client } from "../client/client"
 import {IState, State} from "../data/state"
 import {CSS as css} from "../data/css"
-import {Comment, CommentListItem} from "../data/comment"
+import {Comment, CommentError, CommentListItem} from "../data/comment"
 
 export class CommentService {
     readonly client: Client;
@@ -18,22 +18,39 @@ export class CommentService {
 
         const listItems: CommentListItem[] = [];
         this.comments.forEach((comment) => {
-            const listItem = new CommentListItem(comment);
+            const listItem = new CommentListItem(comment, "", "", "");
             listItems.push(listItem);
         });
 
         this._state.getState().commentListWidget.comments = listItems;
     }
 
-    submitComment(comment: Comment, timeout: number) {
-        const listItem = new CommentListItem(comment);
-        const add = () => {
+    async submitComment(comment: Comment, timeout: number) {
+        const wait = this.minWait(timeout);
+        const {json, err} = await this.client.post(comment.toJSON());
+
+        if (err) {
+            const e = (err.value as CommentError);
+            const listItem = new CommentListItem(comment, css.errHighlight, e.header, e.message);
+
+            await wait;
             this._state.setState((state: State): any => {
-                listItem.klass = css.highlight;
                 state.commentListWidget.comments.unshift(listItem);
             });
-        };
+            return;
+        }
 
-        setTimeout(add, timeout);
+        const listItem = new CommentListItem(comment, css.highlight, "", "");
+
+        await wait;
+        this._state.setState((state: State): any => {
+            state.commentListWidget.comments.unshift(listItem);
+        });
+    }
+
+    minWait(timeout: number): Promise<any> {
+        return new Promise<any>((resolve) => {
+            setTimeout(resolve, timeout);
+        });
     }
 }

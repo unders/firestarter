@@ -146,7 +146,7 @@ class Form {
     }
 
 
-    async publish(e: Event) {
+    publish(e: Event) {
         e.preventDefault();
 
         this.disableSubmit();
@@ -198,18 +198,48 @@ class List {
         this.html = dom.wire(this);
         this.state = state;
         this.widget = state.getState().commentListWidget;
+        this.closeError = this.closeError.bind(this);
     }
 
-    onStateChange(): void {
-        console.log("Len: ", this.widget.comments.length)
+    closeError(e: Event) {
+        const el = e.currentTarget as Element;
+        const i = Number(el.getAttribute("data-index"));
+        this.state.setState((state: State): any => {
+            const comments = state.commentListWidget.comments.filter((comment, index) => {
+                return i !== index;
+            });
+            state.commentListWidget.comments = comments;
+        });
     }
+
+    onStateChange(): void { /* no-op: this class don't depend on external state changes */ }
 
     render() {
         const comments = this.widget.comments;
 
         return this.html`
-            <ul class="funcbox-comment-list">${comments.map( (comment) => dom.wire(comment)`
-                <li class="${['funcbox-comment-item', comment.klass].join(' ')}">${comment.data.body}</li>`)}
+            <ul class="funcbox-comment-list">
+                ${comments.map( (comment, index) => dom.wire(comment)`
+                <li class="${['funcbox-comment-item', comment.klass].join(' ')}"
+                    data-index="${index}"
+                    onclick="${this.closeError}">
+                    <div class="${['funcbox-comment-item-error', comment.errorKlass].join(' ')}">
+                        <div class="funcbox-comment-item-error-header">
+                            <h3>${comment.errorHeader}</h3>
+                            <svg
+                                class="close"
+                                fill="#000000"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                width="24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                <path d="M0 0h24v24H0z" fill="none"/>
+                            </svg>
+                        </div>
+                        <p>${comment.errorMessage}</p>
+                    </div>
+                    ${comment.data.body}</li>`)}
             </ul>`;
     }
 }

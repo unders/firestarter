@@ -2,6 +2,7 @@
 @import "space";
 @import "palette";
 @import "placeholder";
+@import "animation";
 
 @mixin funcbox-comment($font-size-body) {
   .funcbox-comment-heading {
@@ -104,6 +105,7 @@
   .funcbox-comment-item {
       background: $primary-color-text;
       margin-top: 40px;
+      margin-bottom: 40px;
       padding: 20px 20px;
       border: 1px solid rgba(0,0,0,.09);
       border-radius: 3px;
@@ -113,9 +115,30 @@
     animation: highlight 1.5s ease-out;
   }
 
-  @keyframes highlight {
-    0% { background-color: lighten($accent-color, 10%); }
-    100% { background-color: $body-color; }
+  .funcbox-comment-item.error-highlight {
+    animation: errorHighlight 1.5s ease-out;
+    background: lighten($error-color, 40%);
+  }
+  .funcbox-comment-item-error h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .funcbox-comment-item-error-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .funcbox-comment-item-error-header .close {
+    cursor: pointer;
+    min-width: 30px;
+    min-height: 30px;
+  }
+  .funcbox-comment-item-error-header .close:hover {
+    background: lighten($error-color, 35%);
+  }
+
+  .funcbox-comment-item-error.hide {
+    display: none;
   }
 }
 

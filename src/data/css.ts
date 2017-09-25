@@ -1,4 +1,5 @@
 export class CSS {
+    static readonly errHighlight = "error-highlight";
     static readonly highlight = "highlight";
     static readonly error = "error";
     static readonly hide = "hide";

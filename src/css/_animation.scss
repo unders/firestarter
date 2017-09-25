@@ -1,0 +1,11 @@
+@import "palette";
+
+@keyframes highlight {
+  0% { background-color: lighten($accent-color, 10%); }
+  100% { background-color: $body-color; }
+}
+
+@keyframes errorHighlight {
+  0% { background-color: lighten($error-color, 10%); }
+  100% { background-color: lighten($error-color, 40%) }
+}

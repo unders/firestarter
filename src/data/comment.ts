@@ -6,15 +6,19 @@ export class Comment {
     constructor(body: string) {
        this.body = body;
     }
+
+    toJSON(): string {
+        return JSON.stringify({body: this.body});
+    }
 }
 
 export class CommentError {
-    body: string;
-    err: string;
+    header: string;
+    message: string;
 
-    constructor(body: string, err: string) {
-        this.body = body;
-        this.err = err;
+    constructor(header: string, message: string) {
+        this.header = header;
+        this.message = message;
     }
 }
 
@@ -24,10 +28,20 @@ export class CommentError {
 
 export class CommentListItem {
     readonly data: Comment;
-    klass: string = "";
+    readonly klass: string = "";
+    readonly errorKlass: string = "hide";
+    readonly errorHeader: string = "";
+    readonly errorMessage: string = "";
 
-    constructor(comment: Comment) {
-        this.data = comment
+    constructor(comment: Comment, klass: string, errorHeader: string, errorMessage: string) {
+        this.data = comment;
+        this.klass = klass;
+
+        if (errorHeader !== "") {
+            this.errorKlass = "";
+            this.errorHeader = errorHeader;
+            this.errorMessage = errorMessage;
+        }
     }
 }
 

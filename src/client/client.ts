@@ -54,7 +54,9 @@ class MockClient {
 
             switch(data.body) {
                 case "400": {
-                    const comment = new CommentError("400", "400 is a number an not a valid comment.");
+                    const title = "Your comment is not valid, you can do better";
+                    const message = "400 is a number and that is not a valid comment.";
+                    const comment = new CommentError(title, message);
                     const json = JSON.stringify(comment); // this is how it comes from the server.
                     const err = new Error(400, "Bad Request", JSON.parse(json));
                     const j =  JSON.stringify(err);
