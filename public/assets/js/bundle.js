@@ -691,9 +691,9 @@ var CommentService = /** @class */ (function () {
     CommentService.prototype.submitComment = function (comment, timeout) {
         var _this = this;
         var listItem = new comment_1.CommentListItem(comment);
-        listItem.klass = css_1.CSS.highlight;
         var add = function () {
             _this._state.setState(function (state) {
+                listItem.klass = css_1.CSS.highlight;
                 state.commentListWidget.comments.unshift(listItem);
             });
         };

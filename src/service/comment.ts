@@ -27,11 +27,10 @@ export class CommentService {
 
     submitComment(comment: Comment, timeout: number) {
         const listItem = new CommentListItem(comment);
-        listItem.klass = css.highlight;
-
         const add = () => {
             this._state.setState((state: State): any => {
-                state.commentListWidget.comments.unshift(listItem)
+                listItem.klass = css.highlight;
+                state.commentListWidget.comments.unshift(listItem);
             });
         };
 

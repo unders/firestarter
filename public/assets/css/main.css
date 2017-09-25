@@ -207,12 +207,24 @@ header a {
 .funcbox-comment-submit:hover {
   background: #ededed; }
 
+.funcbox-comment-list {
+  padding: 0;
+  margin: 0;
+  list-style-type: none; }
+
+.funcbox-comment-item {
+  background: #FFFFFF;
+  margin-top: 40px;
+  padding: 20px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 3px; }
+
 .funcbox-comment-item.highlight {
-  animation: highlight 2.0s ease-out; }
+  animation: highlight 1.5s ease-out; }
 
 @keyframes highlight {
   0% {
-    background-color: #aacaff; }
+    background-color: #77aaff; }
   100% {
     background-color: #fafafa; } }
 
