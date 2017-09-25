@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,7 +70,7 @@
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var css_1 = __webpack_require__(10);
+var css_1 = __webpack_require__(1);
 var Comment = /** @class */ (function () {
     function Comment(body) {
         this.body = body;
@@ -133,9 +133,28 @@ var CommentFormData = /** @class */ (function () {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var app_1 = __webpack_require__(2);
-var client_1 = __webpack_require__(7);
-var env_1 = __webpack_require__(9);
+var CSS = /** @class */ (function () {
+    function CSS() {
+    }
+    CSS.error = "error";
+    CSS.hide = "hide";
+    CSS.show = "";
+    CSS.empty = "";
+    return CSS;
+}());
+exports.CSS = CSS;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var app_1 = __webpack_require__(3);
+var client_1 = __webpack_require__(8);
+var env_1 = __webpack_require__(10);
 var main = function () {
     var env = new env_1.Env("dev");
     var client = client_1.Client.make(env);
@@ -146,14 +165,14 @@ main();
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var state_1 = __webpack_require__(3);
-var comment = __webpack_require__(4);
+var state_1 = __webpack_require__(4);
+var comment = __webpack_require__(5);
 var App = /** @class */ (function () {
     function App(client) {
         this.state = state_1.State.init();
@@ -181,7 +200,7 @@ exports.App = App;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -202,7 +221,7 @@ exports.State = State;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -243,8 +262,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var css_1 = __webpack_require__(10);
-var dom_1 = __webpack_require__(5);
+var css_1 = __webpack_require__(1);
+var comment_1 = __webpack_require__(0);
+var dom_1 = __webpack_require__(6);
 var Component = /** @class */ (function () {
     function Component(props) {
         var root = document.querySelector(props.root);
@@ -281,15 +301,13 @@ var Form = /** @class */ (function () {
         this.state = state;
         this.widget = state.getState().commentFormWidget;
         this.showForm = this.showForm.bind(this);
+        this.cancelForm = this.cancelForm.bind(this);
         this.hideForm = this.hideForm.bind(this);
         this.saveInput = this.saveInput.bind(this);
         this.removeError = this.removeError.bind(this);
         this.publish = this.publish.bind(this);
     }
-    Form.prototype.onStateChange = function () {
-        /* no-op: this class don't depend on external state changes */
-        console.log("data: ", this.widget.data.body);
-    };
+    Form.prototype.onStateChange = function () { };
     Form.prototype.removeError = function () {
         if (this.widget.form.klass !== css_1.CSS.empty) {
             var callback = function (s) {
@@ -299,6 +317,7 @@ var Form = /** @class */ (function () {
             this.state.setState(callback);
         }
     };
+    // focus must be called after this.state.setState()
     Form.prototype.focus = function () {
         var el = this.root.querySelector(".funcbox-comment-textarea");
         el.focus();
@@ -312,8 +331,11 @@ var Form = /** @class */ (function () {
         this.state.setState(callback);
         this.focus();
     };
-    Form.prototype.hideForm = function (e) {
+    Form.prototype.cancelForm = function (e) {
         e.preventDefault();
+        this.hideForm();
+    };
+    Form.prototype.hideForm = function () {
         var callback = function (s) {
             var w = s.commentFormWidget;
             w.placeholder.klass = css_1.CSS.show;
@@ -338,13 +360,6 @@ var Form = /** @class */ (function () {
         };
         this.state.setState(callback);
     };
-    Form.prototype.enableSubmit = function () {
-        var callback = function (s) {
-            var w = s.commentFormWidget;
-            w.submit.disable = false;
-        };
-        this.state.setState(callback);
-    };
     Form.prototype.setError = function () {
         var callback = function (s) {
             var w = s.commentFormWidget;
@@ -354,25 +369,51 @@ var Form = /** @class */ (function () {
         this.state.setState(callback);
         this.focus();
     };
+    Form.prototype.dataAndJSON = function () {
+        var c = new comment_1.Comment(this.widget.data.body);
+        var json = JSON.stringify(this.widget.data);
+        return [c, json];
+    };
     Form.prototype.isValid = function () {
         return (this.widget.data.body !== "");
     };
     Form.prototype.publish = function (e) {
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                e.preventDefault();
-                //this.disableSubmit();
-                if (!this.isValid()) {
-                    this.setError();
-                    return [2 /*return*/];
+            var _a, comment, req, _b, json, err;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        e.preventDefault();
+                        this.disableSubmit();
+                        if (!this.isValid()) {
+                            this.setError();
+                            return [2 /*return*/];
+                        }
+                        _a = this.dataAndJSON(), comment = _a[0], req = _a[1];
+                        setTimeout(this.hideForm, 500);
+                        console.log(comment, req);
+                        return [4 /*yield*/, this.client.post(req)];
+                    case 1:
+                        _b = _c.sent(), json = _b.json, err = _b.err;
+                        if (err) {
+                            // animate and replace list item with error message
+                            if (err.code == 400) {
+                            }
+                            console.log(err.code, err.status, err.message, err.value);
+                        }
+                        else {
+                            //     // resolve optimistic update
+                            //     // update store.
+                            console.log("json: ", json);
+                        }
+                        return [2 /*return*/];
                 }
-                return [2 /*return*/];
             });
         });
     };
     Form.prototype.render = function () {
         var w = this.widget;
-        return (_a = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], _a.raw = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], this.html(_a, ['funcbox-placeholder', w.placeholder.klass].join(' '), this.showForm, ['funcbox-comment-form', w.form.klass].join(' '), this.publish, this.saveInput, this.removeError, w.data.body, this.hideForm, w.submit.disable));
+        return (_a = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], _a.raw = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], this.html(_a, ['funcbox-placeholder', w.placeholder.klass].join(' '), this.showForm, ['funcbox-comment-form', w.form.klass].join(' '), this.publish, this.saveInput, this.removeError, w.data.body, this.cancelForm, w.submit.disable));
         var _a;
     };
     return Form;
@@ -394,13 +435,13 @@ var List = /** @class */ (function () {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var hyperHTML = __webpack_require__(6);
+var hyperHTML = __webpack_require__(7);
 var Dom = /** @class */ (function () {
     function Dom() {
     }
@@ -416,7 +457,7 @@ exports.Dom = Dom;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 var hyperHTML=function(e,t){"use strict";function n(e){return arguments.length<2?null==e?q("html"):"string"==typeof e?i(null,e):"raw"in e?q("html")(e):"nodeType"in e?r(e):F(e,"html"):("raw"in e?q("html"):i).apply(null,arguments)}function r(e){return l.bind(e)}function i(e,t){return arguments.length<1?q("html"):null==e?q(t||"html"):F(e,t||"html")}function o(){}function a(e,n){return this.node=e,this.childNodes=n,t.aura(this,n)}function l(e){var t=we.get(this);return t&&t.template===re(e)||(t=B.apply(this,arguments),we.set(this,t)),z.apply(t.updates,arguments),this}function c(e,t,n){var r,i=e.ownerElement,o=/^on/.test(n),a="data"===n||x(i,n)&&!K.test(n),l=o?n.slice(2):"",c=o||a;return o&&n.toLowerCase()in i&&(l=l.toLowerCase()),c&&t.push(i,n),o?function(e){r!==e&&(r&&i.removeEventListener(l,r,!1),r=e,e&&i.addEventListener(l,e,!1))}:a?function(e){r!==e&&(r=e,i[n]!==e&&(null==e?(i[n]=null,i.removeAttribute(n)):i[n]=e))}:function(t){r!==t&&(r=t,e.value!==t&&(null==t?c||(c=!0,i.removeAttributeNode(e)):(e.value=t,c&&(c=!1,i.setAttributeNode(e)))))}}function u(e){var t;return function(n){n!==t&&(t=n,e.textContent=n)}}function s(e,r,i){var a;return function l(c){switch(typeof c){case"string":case"number":case"boolean":var u=r.length;1===u&&r[0].nodeType===Z?a!==c&&(a=c,r[0].textContent=c):(a=c,u?i.splice(0,u,w(e,c)):r[0]=e.parentNode.insertBefore(w(e,c),e));break;case"function":l(c(e.parentNode,r,0));break;case"object":case"undefined":if(null==c){a=c,l("");break}c instanceof o&&(c=c.render());default:if(a=c,ce(c)){var u=c.length;if(0===u)i.splice(0);else switch(typeof c[0]){case"string":case"number":case"boolean":l({html:c});break;case"function":for(var s=e.parentNode,f=0;f<u;f++)c[f]=c[f](s,r,f);l(c.concat.apply([],c));break;case"object":if(ce(c[0])&&(c=c.concat.apply([],c)),T(c[0])){Promise.all(c).then(l);break}for(var f=0,u=c.length;f<u;f++)c[f]instanceof o&&(c[f]=c[f].render());default:t(i,c,n.MAX_LIST_SIZE)}}else if(C(c))t(i,c.nodeType===W?ie.call(c.childNodes):[c],n.MAX_LIST_SIZE);else if(T(c))c.then(l);else if("placeholder"in c)S(l,c);else if("text"in c)l(String(c.text));else if("any"in c)l(c.any);else if("html"in c){var h=[].concat(c.html).join("");i.splice(0);var p=m(e,h);r.push.apply(r,p.childNodes),e.parentNode.insertBefore(p,e)}else l("length"in c?ie.call(c):E(c))}}}function f(e,t,n){for(var r,i,o=Q,a=e.attributes,l=0,c=a.length;l<c;l++)i=a[l],i.value===o&&(r=n.shift().replace(/^(?:|[\S\s]*?\s)(\S+?)=['"]?$/,"$1"),t.push(M("attr",e.attributes[r.toLowerCase()],r)))}function h(e,t,n){for(var r,i=e.childNodes,o=i.length,a=0;a<o;a++)switch(r=i[a],r.nodeType){case R:f(r,t,n),h(r,t,n);break;case V:r.textContent===Q&&(n.shift(),t.push(M("any",r)));break;case Z:K.test(e.nodeName)&&ue.call(r.textContent)===U&&(n.shift(),t.push(M("text",e)))}}function p(e){return oe[e]}function d(e){return{html:e}}function v(e){for(var t,n=[],r=e.childNodes,i=0,o=r.length;i<o;i++)t=r[i],t.nodeType!==R&&0===ue.call(t.textContent).length||n.push(t);return 1===n.length?n[0]:n}function g(e){return e.createDocumentFragment()}function m(e,t){return(G in e?b:y)(e,t.replace(ge,ye))}function y(e,t){var n,r=e.ownerDocument,i=r.createElement("template"),o="content"in i,a=!1;if(o||(n=g(r),a=/^[^\S]*?<(col(?:group)?|t(?:head|body|foot|r|d|h))/i.test(t)),a){var l=RegExp.$1;i.innerHTML="<table>"+t+"</table>",pe(n,ie.call(i.querySelectorAll(l)))}else i.innerHTML=t,o?n=i.content:pe(n,ie.call(i.childNodes));return n}function b(e,t){var n=e.ownerDocument,r=g(n);if(te||ne){var i=n.createElement("div");i.innerHTML='<svg xmlns="'+J+'">'+t+"</svg>",pe(r,ie.call(i.firstChild.childNodes))}else{var i=n.createElementNS(J,"svg");i.innerHTML=t,pe(r,ie.call(i.childNodes))}return r}function w(e,t){return e.ownerDocument.createTextNode(t)}function N(e){var t=n.document,r=t.customElements||t.defaultView.customElements;return r&&r.get(e.nodeName.toLowerCase())}function x(e,t){var n=!(G in e);if(n&&/-/.test(e.nodeName)){var r=N(e);r&&(e=r.prototype)}return n&&t in e}function S(e,t){e(t.placeholder),"text"in t?Promise.resolve(t.text).then(String).then(e):"any"in t?Promise.resolve(t.any).then(e):"html"in t?Promise.resolve(t.html).then(d).then(e):Promise.resolve(E(t)).then(e)}function E(e){for(var t in fe)if(e.hasOwnProperty(t))return fe[t](e[t])}function C(e){return"ELEMENT_NODE"in e}function T(e){return null!=e&&"then"in e}function k(e,t){var n="_"+e+"$";return{get:function(){return this[n]||(this[e]=t.call(this,e))},set:function(e){se(this,n,{configurable:!0,value:e})}}}function A(e){for(var t=0,n=e.length;t<n;t++)e[t++].removeAttribute(e[t])}function L(e,t,n,r){var i;switch(e.type){case"any":i=s(t,r,new a(t,r));break;case"attr":i=c(t,n,e.name);break;case"text":i=u(t)}return i}function M(e,t,n){return{type:e,path:H(t),name:n}}function _(e){var t="_"+e.join(U);return he[t]||(he[t]=e)}function D(e,t){var n=t.previousSibling;n&&n.nodeType===Z&&(e.removeChild(n),D(e,t))}function O(e,t,n){n?e.insertBefore(t,n):e.appendChild(t)}function j(e,t,n,r){for(var i=e,o=e.ownerDocument,a=n.path,l=ve(t,a),c=0,u=a.length;c<u;c++)switch(a[c++]){case"attributes":var s=l.name;e.hasAttribute(s)||e.setAttribute(s,""),i=e.attributes[s];break;case"childNodes":var f=de(e),h=de(l.parentNode);i=Te(l);var p=i?a.indexOf.call(h,i)+1:-1;i=Ce(l);var d=i?a.indexOf.call(h,i):-1;switch(i=o.createComment(Q),!0){case d<0:d=f.length;break;case p<0:p=0;default:d=-(h.length-d)}r.push.apply(r,ie.call(f,p,d)),r.length?O(e,i,Ce(r[r.length-1])):O(e,i,ie.call(f,d)[0]),0===r.length&&D(e,i);break;default:i=de(e)[a[c]]||e.appendChild(e.ownerDocument.createElement(ve(t,a.slice(0,c+1)).nodeName)),e=i}return i}function I(e,t){for(var n,r,i=[],o=[],a=0,l=t.length;a<l;a++)r=[],n=t[a],i[a]=L(n,j(this,e,n,r),o,r);return A(o),i}function P(e){var t=[],n=m(this,e.join(U)),r={fragment:n,paths:t};return h(n,t,e.slice()),xe.set(e,r),r}function H(e){var t,n=[];switch(e.nodeType){case R:case W:t=e;break;case V:t=e.parentNode,n.unshift("childNodes",n.indexOf.call(t.childNodes,e));break;case X:default:t=e.ownerElement,n.unshift("attributes",e.name)}for(e=t;t=t.parentNode;e=t)n.unshift("children",n.indexOf.call(de(t),e));return n}function $(e,t){for(var n,r=[],i=[],o=0,a=t.length;o<a;o++)n=t[o],r[o]=L(n,ve(e,n.path),i,[]);return A(i),r}function z(){for(var e=1,t=arguments.length;e<t;e++)this[e-1](arguments[e])}function B(e){e=re(e);var t,n=xe.get(e)||P.call(this,e);if(Se){var r=Ee(n.fragment);t=$.call(this,r,n.paths),this.textContent="",this.appendChild(r)}else t=I.call(this,n.fragment,n.paths);return{template:e,updates:t}}function q(e){function t(t){c=g(t),l="svg"===e?t.createElementNS(J,"svg"):c,u=r(l)}function i(){return s&&(s=!1,"svg"===e&&pe(c,ie.call(l.childNodes)),a=v(c)),a}var o,a,l,c,u,s,f;return"adopt"===e?function(r){var a=arguments;return r=re(r),f!==r&&(s=!0,f=r,o=function(r,o,f){return s&&(f<o.length?(l=o[f],c={ownerDocument:l.ownerDocument,childNodes:[l],children:[l]},u=n.adopt(c)):(G in r&&(e="svg"),t(r.ownerDocument))),u.apply(null,a),i()}),o}:function(e){return e=re(e),f!==e&&(s=!0,f=e,t(n.document)),u.apply(null,arguments),i()}}function F(e,t){var n=Ne.get(e),r=t.indexOf(":"),i=t;return-1<r&&(i=t.slice(r+1),t=t.slice(0,r)||"html"),n||(n={},Ne.set(e,n)),n[i]||(n[i]=q(t))}/*! (c) 2017 Andrea Giammarchi @WebReflection, (ISC) */
@@ -424,7 +465,7 @@ n.document=e,n.hyper=n,n.adopt=function(e){return function(){return Se=!1,l.appl
 var o="del",a="ins",l="sub",c=/^u/.test(typeof Int32Array)?Array:Int32Array;return e.aura=function(e,t){var n=t.splice;return t.splice=function r(){t.splice=n;var i=e.splice.apply(e,arguments);return t.splice=r,i},t},e}());try{module.exports=hyperHTML}catch(e){}
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -465,7 +506,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var error_1 = __webpack_require__(8);
+var error_1 = __webpack_require__(9);
 var comment_1 = __webpack_require__(0);
 var Response = /** @class */ (function () {
     function Response(json, err) {
@@ -528,7 +569,7 @@ var MockClient = /** @class */ (function () {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -586,7 +627,7 @@ exports.Error = Error;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -615,25 +656,6 @@ var Env = /** @class */ (function () {
     return Env;
 }());
 exports.Env = Env;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var CSS = /** @class */ (function () {
-    function CSS() {
-    }
-    CSS.error = "error";
-    CSS.hide = "hide";
-    CSS.show = "";
-    CSS.empty = "";
-    return CSS;
-}());
-exports.CSS = CSS;
 
 
 /***/ })

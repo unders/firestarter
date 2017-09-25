@@ -60,16 +60,14 @@ class Form {
         this.state = state;
         this.widget = state.getState().commentFormWidget;
         this.showForm = this.showForm.bind(this);
+        this.cancelForm = this.cancelForm.bind(this);
         this.hideForm = this.hideForm.bind(this);
         this.saveInput = this.saveInput.bind(this);
         this.removeError = this.removeError.bind(this);
         this.publish = this.publish.bind(this);
     }
 
-    onStateChange(): void {
-        /* no-op: this class don't depend on external state changes */
-        console.log("data: ", this.widget.data.body);
-    }
+    onStateChange(): void { /* no-op: this class don't depend on external state changes */ }
 
     removeError() {
         if (this.widget.form.klass !== css.empty) {
@@ -81,6 +79,7 @@ class Form {
         }
     }
 
+    // focus must be called after this.state.setState()
     focus() {
         const el = this.root.querySelector(".funcbox-comment-textarea");
         (el as HTMLTextAreaElement).focus();
@@ -98,9 +97,12 @@ class Form {
     }
 
 
-    hideForm(e: Event) {
+    cancelForm(e: Event) {
         e.preventDefault();
+        this.hideForm();
+    }
 
+    hideForm() {
         const callback = (s: State): any => {
             const w = s.commentFormWidget;
             w.placeholder.klass = css.show;
@@ -130,14 +132,6 @@ class Form {
         this.state.setState(callback);
     }
 
-    enableSubmit() {
-        const callback = (s: State): any => {
-            const w = s.commentFormWidget;
-            w.submit.disable = false;
-        };
-        this.state.setState(callback);
-    }
-
     setError() {
         const callback = (s: State): any => {
             const w = s.commentFormWidget;
@@ -148,6 +142,12 @@ class Form {
         this.focus();
     }
 
+    dataAndJSON(): [Comment, string] {
+        const c = new Comment(this.widget.data.body);
+        const json = JSON.stringify(this.widget.data);
+        return [c, json]
+    }
+
     isValid(): boolean {
         return (this.widget.data.body !== "")
     }
@@ -155,30 +155,29 @@ class Form {
     async publish(e: Event) {
         e.preventDefault();
 
-        //this.disableSubmit();
+        this.disableSubmit();
         if (!this.isValid()) {
             this.setError();
             return
         }
+        const [comment, req] = this.dataAndJSON();
+        setTimeout(this.hideForm, 500);
 
-        // const req = this.view.toJSON();
-        // this.view.reset();
-        // this.render();
+        console.log(comment, req);
 
-        // animate a fast add at the top of list...
+        //  add to comments state list submitted
 
-        // const {json, err} = await this.client.post(req);
-        // if (err) {
-        //     // animate and replace list item with error message
-        //     if (err.code == 400) {
-        //
-        //     }
-        //     console.log(err.code, err.status, err.message, err.value);
-        // } else {
+         const {json, err} = await this.client.post(req);
+         if (err) {
+             // animate and replace list item with error message
+             if (err.code == 400) {
+            }
+             console.log(err.code, err.status, err.message, err.value);
+         } else {
         //     // resolve optimistic update
         //     // update store.
-        //     console.log("json: ", json);
-        // }
+             console.log("json: ", json);
+         }
     }
 
     render() {
@@ -202,7 +201,7 @@ class Form {
                                     placeholder="Write a comment..."></textarea>
                         <div class="funcbox-comment-footer">
                             <button class="funcbox-comment-submit"
-                                    onclick=${this.hideForm}>Cancel</button>
+                                    onclick=${this.cancelForm}>Cancel</button>
                             <button class="funcbox-comment-submit publish"
                                     disabled="${w.submit.disable}">Publish</button>
                         </div>
