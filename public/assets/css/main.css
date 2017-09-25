@@ -207,4 +207,13 @@ header a {
 .funcbox-comment-submit:hover {
   background: #ededed; }
 
+.funcbox-comment-item.highlight {
+  animation: highlight 2.0s ease-out; }
+
+@keyframes highlight {
+  0% {
+    background-color: #aacaff; }
+  100% {
+    background-color: #fafafa; } }
+
 /*# sourceMappingURL=main.css.map */

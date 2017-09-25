@@ -91,6 +91,7 @@ exports.CommentError = CommentError;
 //
 var CommentListItem = /** @class */ (function () {
     function CommentListItem(comment) {
+        this.klass = "";
         this.data = comment;
     }
     return CommentListItem;
@@ -156,6 +157,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var CSS = /** @class */ (function () {
     function CSS() {
     }
+    CSS.highlight = "highlight";
     CSS.error = "error";
     CSS.hide = "hide";
     CSS.show = "";
@@ -428,9 +430,9 @@ var List = /** @class */ (function () {
     };
     List.prototype.render = function () {
         var comments = this.widget.comments;
-        return (_a = ["\n            <ul class=\"comments\">", "\n            </ul>"], _a.raw = ["\n            <ul class=\"comments\">",
+        return (_a = ["\n            <ul class=\"funcbox-comment-list\">", "\n            </ul>"], _a.raw = ["\n            <ul class=\"funcbox-comment-list\">",
             "\n            </ul>"], this.html(_a, comments.map(function (comment) {
-            return (_a = ["\n                <li>", "</li>"], _a.raw = ["\n                <li>", "</li>"], dom_1.Dom.wire(comment)(_a, comment.data.body));
+            return (_a = ["\n                <li class=\"", "\">", "</li>"], _a.raw = ["\n                <li class=\"", "\">", "</li>"], dom_1.Dom.wire(comment)(_a, ['funcbox-comment-item', comment.klass].join(' '), comment.data.body));
             var _a;
         })));
         var _a;
@@ -670,6 +672,7 @@ exports.Env = Env;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var css_1 = __webpack_require__(1);
 var comment_1 = __webpack_require__(0);
 var CommentService = /** @class */ (function () {
     function CommentService(client, comments) {
@@ -688,11 +691,11 @@ var CommentService = /** @class */ (function () {
     CommentService.prototype.submitComment = function (comment, timeout) {
         var _this = this;
         var listItem = new comment_1.CommentListItem(comment);
-        var callback = function (state) {
-            state.commentListWidget.comments.unshift(listItem);
-        };
+        listItem.klass = css_1.CSS.highlight;
         var add = function () {
-            _this._state.setState(callback);
+            _this._state.setState(function (state) {
+                state.commentListWidget.comments.unshift(listItem);
+            });
         };
         setTimeout(add, timeout);
     };

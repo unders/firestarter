@@ -93,6 +93,15 @@
     background: darken($primary-color-text, 7);
   }
 
+  .funcbox-comment-item.highlight {
+    animation: highlight 2.0s ease-out;
+  }
+
+  @keyframes highlight {
+    0% { background-color: lighten($accent-color, 20%); }
+    100% { background-color: $body-color; }
+  }
+
 }
 
 

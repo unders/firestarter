@@ -1,5 +1,6 @@
 import { Client } from "../client/client"
 import {IState, State} from "../data/state"
+import {CSS as css} from "../data/css"
 import {Comment, CommentListItem} from "../data/comment"
 
 export class CommentService {
@@ -26,13 +27,12 @@ export class CommentService {
 
     submitComment(comment: Comment, timeout: number) {
         const listItem = new CommentListItem(comment);
-
-        const callback = (state: State): any => {
-            state.commentListWidget.comments.unshift(listItem)
-        };
+        listItem.klass = css.highlight;
 
         const add = () => {
-            this._state.setState(callback);
+            this._state.setState((state: State): any => {
+                state.commentListWidget.comments.unshift(listItem)
+            });
         };
 
         setTimeout(add, timeout);

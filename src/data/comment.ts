@@ -24,6 +24,7 @@ export class CommentError {
 
 export class CommentListItem {
     readonly data: Comment;
+    klass: string = "";
 
     constructor(comment: Comment) {
         this.data = comment

@@ -208,8 +208,8 @@ class List {
         const comments = this.widget.comments;
 
         return this.html`
-            <ul class="comments">${comments.map( (comment) => dom.wire(comment)`
-                <li>${comment.data.body}</li>`)}
+            <ul class="funcbox-comment-list">${comments.map( (comment) => dom.wire(comment)`
+                <li class="${['funcbox-comment-item', comment.klass].join(' ')}">${comment.data.body}</li>`)}
             </ul>`;
     }
 }
