@@ -1,15 +1,16 @@
-import { Client } from "../client/client"
+import { Router as router} from "../router"
+import { XHR } from "../client/client"
 import {IState, State} from "../data/state"
 import {CSS as css} from "../data/css"
-import {Comment, CommentError, CommentListItem} from "../data/comment"
+import {Comment, CommentListItem} from "../data/comment"
 
 export class CommentService {
-    readonly client: Client;
+    readonly xhr: XHR;
     readonly comments: Comment[];
     _state: IState;
 
-    constructor(client: Client, comments: Comment[]) {
-        this.client = client;
+    constructor(xhr: XHR, comments: Comment[]) {
+        this.xhr = xhr;
         this.comments = comments;
     }
 
@@ -27,11 +28,10 @@ export class CommentService {
 
     async submitComment(comment: Comment, timeout: number) {
         const wait = this.minWait(timeout);
-        const {json, err} = await this.client.post(comment.toJSON());
+        const {json, err} = await this.xhr.post(router.commentPath, comment.toJSON());
 
         if (err) {
-            const e = (err.value as CommentError);
-            const listItem = new CommentListItem(comment, css.errHighlight, e.header, e.message);
+            const listItem = new CommentListItem(comment, css.errHighlight, err.header, err.message);
 
             await wait;
             this._state.setState((state: State): any => {

@@ -2,7 +2,7 @@
 
 @keyframes highlight {
   0% { background-color: lighten($accent-color, 10%); }
-  100% { background-color: $body-color; }
+  100% { background-color: $primary-color-text; }
 }
 
 @keyframes errorHighlight {

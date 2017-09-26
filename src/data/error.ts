@@ -1,19 +1,19 @@
 export class Error {
     readonly code: number;
     readonly status: string;
+    readonly header: string;
     readonly message: string;
-    readonly value: object;
 
-    constructor(code: number, message: string, data: object) {
+    constructor(code: number, header: string, message: string) {
         this.code = code;
         this.status = Error.statusText(code);
+        this.header = header;
         this.message = message;
-        this.value = data;
     }
 
     static fromJSON(json: string): Error {
         const body = JSON.parse(json) as JSONError;
-        return new Error(body.error.code, body.error.message, body.error.value);
+        return new Error(body.error.code, body.error.header, body.error.message);
     }
 
     static statusText(code: number): string {
@@ -59,8 +59,8 @@ interface JSONError {
 
 interface JSONErrorBody {
     code: number;
-    message: string;
     status: string;
-    value: object;
+    header: string;
+    message: string;
 }
 

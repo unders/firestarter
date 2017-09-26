@@ -12,16 +12,6 @@ export class Comment {
     }
 }
 
-export class CommentError {
-    header: string;
-    message: string;
-
-    constructor(header: string, message: string) {
-        this.header = header;
-        this.message = message;
-    }
-}
-
 //
 // Comment Widgets - Form and List
 //
@@ -29,7 +19,7 @@ export class CommentError {
 export class CommentListItem {
     readonly data: Comment;
     readonly klass: string = "";
-    readonly errorKlass: string = "hide";
+    readonly errorKlass: string = css.hide;
     readonly errorHeader: string = "";
     readonly errorMessage: string = "";
 

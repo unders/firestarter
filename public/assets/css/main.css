@@ -17,7 +17,7 @@ body *::before {
   0% {
     background-color: #77aaff; }
   100% {
-    background-color: #fafafa; } }
+    background-color: #FFFFFF; } }
 
 @keyframes errorHighlight {
   0% {

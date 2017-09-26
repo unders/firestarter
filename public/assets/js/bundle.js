@@ -81,21 +81,13 @@ var Comment = /** @class */ (function () {
     return Comment;
 }());
 exports.Comment = Comment;
-var CommentError = /** @class */ (function () {
-    function CommentError(header, message) {
-        this.header = header;
-        this.message = message;
-    }
-    return CommentError;
-}());
-exports.CommentError = CommentError;
 //
 // Comment Widgets - Form and List
 //
 var CommentListItem = /** @class */ (function () {
     function CommentListItem(comment, klass, errorHeader, errorMessage) {
         this.klass = "";
-        this.errorKlass = "hide";
+        this.errorKlass = css_1.CSS.hide;
         this.errorHeader = "";
         this.errorMessage = "";
         this.data = comment;
@@ -193,7 +185,7 @@ var env_1 = __webpack_require__(10);
 var comment_1 = __webpack_require__(11);
 var main = function () {
     var env = new env_1.Env("dev");
-    var client = client_1.Client.make(env);
+    var client = client_1.Client.make(env, "", new client_1.Headers(), 5);
     var commentService = new comment_1.CommentService(client, funcboxComments());
     var app = new app_1.App(commentService);
     app.render();
@@ -505,21 +497,89 @@ var Response = /** @class */ (function () {
     return Response;
 }());
 exports.Response = Response;
-var Client = /** @class */ (function () {
-    function Client() {
+var Headers = /** @class */ (function () {
+    function Headers() {
     }
-    Client.make = function (env) {
+    return Headers;
+}());
+exports.Headers = Headers;
+//
+// https://xhr.spec.whatwg.org/
+//
+var Client = /** @class */ (function () {
+    function Client(host, headers, timeout) {
+        this.timeout = 5000; // time in milliseconds (default = 5 seconds)
+        this.host = host;
+        this.headers = headers;
+        this.headers['Content-Type'] = 'application/json; charset=utf-8';
+        if (timeout !== 0) {
+            this.timeout = timeout;
+        }
+    }
+    Client.make = function (env, host, headers, timeout) {
         if (!env.isProd()) {
             return new MockClient();
         }
-        return new Client();
+        return new Client(host, headers, timeout);
     };
-    Client.prototype.post = function (json) {
+    Client.prototype.post = function (path, json) {
         return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve) {
-                        var resp = new Response("No implementation" + json, null);
-                        resolve(resp);
+                        try {
+                            var xhr_1 = new XMLHttpRequest();
+                            for (var key in _this.headers) {
+                                xhr_1.setRequestHeader(key, _this.headers[key]);
+                            }
+                            xhr_1.timeout = _this.timeout;
+                            xhr_1.open("POST", _this.host + path);
+                            xhr_1.ontimeout = function (e) {
+                                e.preventDefault();
+                                var header = "Request Timeout";
+                                var message = "Request took to long, please try again.";
+                                var err = new error_1.Error(503, header, message);
+                                var resp = new Response("{}", err);
+                                resolve(resp);
+                            };
+                            xhr_1.onloadend = function (e) {
+                                e.preventDefault();
+                                if (xhr_1.status < 300) {
+                                    // 200 ... 299
+                                    var resp = new Response(xhr_1.responseText, null);
+                                    resolve(resp);
+                                }
+                                else if (xhr_1.status > 299 && xhr_1.status < 500) {
+                                    // 400 .. 499
+                                    var err = error_1.Error.fromJSON(xhr_1.responseText);
+                                    var resp = new Response("{}", err);
+                                    resolve(resp);
+                                }
+                                else if (xhr_1.status === 503) {
+                                    var header = "Request Timeout";
+                                    var message = "Request took to long, please try again.";
+                                    var err = new error_1.Error(xhr_1.status, header, message);
+                                    var resp = new Response("{}", err);
+                                    resolve(resp);
+                                }
+                                else {
+                                    var header = "A server problem";
+                                    var message = "It was a problem on our server, please try again.";
+                                    var err = new error_1.Error(xhr_1.status, header, message);
+                                    var resp = new Response("{}", err);
+                                    resolve(resp);
+                                }
+                            };
+                            xhr_1.send(json);
+                        }
+                        catch (e) {
+                            // TODO: log the error
+                            var header = "The Request failed";
+                            var message = "We are investigating the problem, please try again.";
+                            var err = new error_1.Error(500, header, message);
+                            var resp = new Response("{}", err);
+                            resolve(resp);
+                        }
                     })];
             });
         });
@@ -530,23 +590,20 @@ exports.Client = Client;
 var MockClient = /** @class */ (function () {
     function MockClient() {
     }
-    MockClient.prototype.post = function (json) {
+    MockClient.prototype.post = function (path, json) {
         return new Promise(function (resolve) {
             var data = JSON.parse(json);
             switch (data.body) {
                 case "400": {
-                    var title = "Your comment is not valid, you can do better";
+                    var header = "Your comment is not valid, you can do better";
                     var message = "400 is a number and that is not a valid comment.";
-                    var comment = new comment_1.CommentError(title, message);
-                    var json_1 = JSON.stringify(comment); // this is how it comes from the server.
-                    var err = new error_1.Error(400, "Bad Request", JSON.parse(json_1));
-                    var j = JSON.stringify(err);
-                    var resp = new Response(j, err);
+                    var err = new error_1.Error(400, header, message);
+                    var resp = new Response("{}", err);
                     resolve(resp);
                     break;
                 }
                 default: {
-                    // when it works...
+                    // When it works
                     var comment = new comment_1.Comment(data.body);
                     var resp = new Response(JSON.stringify(comment), null);
                     setTimeout(resolve, 1000, resp);
@@ -567,15 +624,15 @@ var MockClient = /** @class */ (function () {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Error = /** @class */ (function () {
-    function Error(code, message, data) {
+    function Error(code, header, message) {
         this.code = code;
         this.status = Error.statusText(code);
+        this.header = header;
         this.message = message;
-        this.value = data;
     }
     Error.fromJSON = function (json) {
         var body = JSON.parse(json);
-        return new Error(body.error.code, body.error.message, body.error.value);
+        return new Error(body.error.code, body.error.header, body.error.message);
     };
     Error.statusText = function (code) {
         switch (code) {
@@ -691,11 +748,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var router_1 = __webpack_require__(12);
 var css_1 = __webpack_require__(1);
 var comment_1 = __webpack_require__(0);
 var CommentService = /** @class */ (function () {
-    function CommentService(client, comments) {
-        this.client = client;
+    function CommentService(xhr, comments) {
+        this.xhr = xhr;
         this.comments = comments;
     }
     CommentService.prototype.init = function (state) {
@@ -709,17 +767,16 @@ var CommentService = /** @class */ (function () {
     };
     CommentService.prototype.submitComment = function (comment, timeout) {
         return __awaiter(this, void 0, void 0, function () {
-            var wait, _a, json, err, e, listItem_1, listItem;
+            var wait, _a, json, err, listItem_1, listItem;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         wait = this.minWait(timeout);
-                        return [4 /*yield*/, this.client.post(comment.toJSON())];
+                        return [4 /*yield*/, this.xhr.post(router_1.Router.commentPath, comment.toJSON())];
                     case 1:
                         _a = _b.sent(), json = _a.json, err = _a.err;
                         if (!err) return [3 /*break*/, 3];
-                        e = err.value;
-                        listItem_1 = new comment_1.CommentListItem(comment, css_1.CSS.errHighlight, e.header, e.message);
+                        listItem_1 = new comment_1.CommentListItem(comment, css_1.CSS.errHighlight, err.header, err.message);
                         return [4 /*yield*/, wait];
                     case 2:
                         _b.sent();
@@ -748,6 +805,22 @@ var CommentService = /** @class */ (function () {
     return CommentService;
 }());
 exports.CommentService = CommentService;
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Router = /** @class */ (function () {
+    function Router() {
+    }
+    Router.commentPath = "/api/comments";
+    return Router;
+}());
+exports.Router = Router;
 
 
 /***/ })
