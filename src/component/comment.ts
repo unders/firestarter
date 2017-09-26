@@ -220,14 +220,14 @@ class List {
         return this.html`
             <ul class="funcbox-comment-list">
                 ${comments.map( (comment, index) => dom.wire(comment)`
-                <li class="${['funcbox-comment-item', comment.klass].join(' ')}"
-                    data-index="${index}"
-                    onclick="${this.closeError}">
+                <li class="${['funcbox-comment-item', comment.klass].join(' ')}">
                     <div class="${['funcbox-comment-item-error', comment.errorKlass].join(' ')}">
                         <div class="funcbox-comment-item-error-header">
                             <h3>${comment.errorHeader}</h3>
                             <svg
                                 class="close"
+                                data-index="${index}"
+                                onclick="${this.closeError}"
                                 fill="#000000"
                                 height="24"
                                 viewBox="0 0 24 24"
