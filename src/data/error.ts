@@ -12,8 +12,14 @@ export class Error {
     }
 
     static fromJSON(json: string): Error {
-        const body = JSON.parse(json) as JSONError;
-        return new Error(body.error.code, body.error.header, body.error.message);
+        try {
+            const body = JSON.parse(json) as JSONError;
+            return new Error(body.error.code, body.error.header, body.error.message);
+        } catch {
+            const header = "A server problem";
+            const message = "It was a problem on our server, please try again.";
+            return new Error(500, header, message);
+        }
     }
 
     static statusText(code: number): string {
@@ -47,7 +53,7 @@ export class Error {
                 return "Service Unavailable";
             }
             default: {
-                return "Unknown error";
+                return "Unknown Error";
             }
         }
     }

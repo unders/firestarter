@@ -1,5 +1,5 @@
 import { Error } from '../data/error';
-import { Comment, CommentError } from '../data/comment';
+import { Comment } from '../data/comment';
 import { Env } from "../data/env";
 
 export class Response {

@@ -631,8 +631,15 @@ var Error = /** @class */ (function () {
         this.message = message;
     }
     Error.fromJSON = function (json) {
-        var body = JSON.parse(json);
-        return new Error(body.error.code, body.error.header, body.error.message);
+        try {
+            var body = JSON.parse(json);
+            return new Error(body.error.code, body.error.header, body.error.message);
+        }
+        catch (_a) {
+            var header = "A server problem";
+            var message = "It was a problem on our server, please try again.";
+            return new Error(500, header, message);
+        }
     };
     Error.statusText = function (code) {
         switch (code) {
@@ -665,7 +672,7 @@ var Error = /** @class */ (function () {
                 return "Service Unavailable";
             }
             default: {
-                return "Unknown error";
+                return "Unknown Error";
             }
         }
     };

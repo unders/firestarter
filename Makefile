@@ -7,6 +7,10 @@ help:
 start: ## starts the dev environment
 	@modd -f support/modd.conf
 
+.PHONY: test
+test: ## runs JavaScript tests.
+	node_modules/.bin/jest
+
 .PHONY: tree
 tree: ## lists the projects file structure
 	tree -I node_modules
