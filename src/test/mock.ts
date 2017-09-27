@@ -1,6 +1,15 @@
-import { Request} from  '../client/client'
+import { Client, Request, Headers } from  '../client/client'
 
-export class XMLHttpRequestMock implements Request {
+
+export const newClient = (): [XMLHttpRequestMock, Client] => {
+    const mock = new XMLHttpRequestMock();
+    const client = new Client("localhost:8000", new Headers(), 0);
+    Client.newRequest = (): Request => { return mock; };
+    return [mock, client];
+};
+
+
+class XMLHttpRequestMock implements Request {
     responseText: string;
     status: number;
     timeout: number;

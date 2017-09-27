@@ -1,13 +1,9 @@
 import { Error } from '../data/error'
 import { Client, Headers, Request} from  './client'
-import { XMLHttpRequestMock } from  '../test/mock'
+import { newClient } from  '../test/mock'
 
 describe("Client", () => {
-    const mock = new XMLHttpRequestMock();
-    const client = new Client("localhost:8000", new Headers(), 0);
-    Client.newRequest = (): Request => {
-        return mock;
-    };
+    const [mock, client] = newClient();
 
     test("#post returns Error when timeout (status:503)", async () => {
         expect.assertions(1);
