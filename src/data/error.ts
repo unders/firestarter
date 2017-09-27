@@ -11,6 +11,15 @@ export class Error {
         this.message = message;
     }
 
+    toJSON(): string {
+        return `{"error": {
+                    "code": ${this.code},
+                    "status": "${this.status}",
+                    "header": "${this.header}",
+                    "message": "${this.message}" }
+                 }`;
+    }
+
     static fromJSON(json: string): Error {
         try {
             const body = JSON.parse(json) as JSONError;

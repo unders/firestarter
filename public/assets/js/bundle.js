@@ -522,13 +522,16 @@ var Client = /** @class */ (function () {
         }
         return new Client(host, headers, timeout);
     };
+    Client.newRequest = function () {
+        return new XMLHttpRequest();
+    };
     Client.prototype.post = function (path, json) {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve) {
                         try {
-                            var xhr_1 = new XMLHttpRequest();
+                            var xhr_1 = Client.newRequest();
                             for (var key in _this.headers) {
                                 xhr_1.setRequestHeader(key, _this.headers[key]);
                             }
@@ -574,8 +577,8 @@ var Client = /** @class */ (function () {
                         }
                         catch (e) {
                             // TODO: log the error
-                            var header = "The Request failed";
-                            var message = "We are investigating the problem, please try again.";
+                            var header = "Request failed";
+                            var message = "We are investigating the problem, please try ";
                             var err = new error_1.Error(500, header, message);
                             var resp = new Response("{}", err);
                             resolve(resp);
@@ -630,6 +633,9 @@ var Error = /** @class */ (function () {
         this.header = header;
         this.message = message;
     }
+    Error.prototype.toJSON = function () {
+        return "{\"error\": {\n                    \"code\": " + this.code + ",\n                    \"status\": \"" + this.status + "\",\n                    \"header\": \"" + this.header + "\",\n                    \"message\": \"" + this.message + "\" }\n                 }";
+    };
     Error.fromJSON = function (json) {
         try {
             var body = JSON.parse(json);

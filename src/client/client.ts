@@ -31,13 +31,24 @@ export class Headers {
     [key: string]: string;
 }
 
+export interface Request {
+    responseText: string;
+    status: number;
+    timeout: number;
+    setRequestHeader(header: string, value: string): void;
+    open(method: string, url: string): void;
+    send(data?: string): void;
+    onloadend: (this: XMLHttpRequest, ev: ProgressEvent) => any;
+    ontimeout: (this: XMLHttpRequest, ev: ProgressEvent) => any;
+}
+
 //
 // https://xhr.spec.whatwg.org/
 //
 export class Client {
-    readonly timeout: number = 5000; // time in milliseconds (default = 5 seconds)
-    readonly headers: Headers;
-    readonly host: string; // http://localhost:8080
+    private readonly timeout: number = 5000; // time in milliseconds (default = 5 seconds)
+    private readonly headers: Headers;
+    private readonly host: string; // http://localhost:8080
 
     constructor(host:string, headers: Headers, timeout: number) {
         this.host = host;
@@ -55,10 +66,14 @@ export class Client {
         return new Client(host, headers, timeout);
     }
 
+    static newRequest(): Request {
+        return new XMLHttpRequest();
+    }
+
     async post(path: string, json: string): Promise<Response> {
         return new Promise<Response>((resolve) => {
             try {
-                const xhr = new XMLHttpRequest();
+                const xhr = Client.newRequest();
                 for (let key in this.headers) {
                     xhr.setRequestHeader(key, this.headers[key]);
                 }
@@ -104,8 +119,8 @@ export class Client {
                 xhr.send(json);
             } catch (e) {
                 // TODO: log the error
-                const header = "The Request failed";
-                const message = "We are investigating the problem, please try again.";
+                const header = "Request failed";
+                const message = "We are investigating the problem, please try ";
                 const err = new Error(500, header, message);
                 const resp = new Response("{}", err);
                 resolve(resp);
