@@ -245,9 +245,24 @@ var State = /** @class */ (function () {
         s.commentListWidget = new comment_1.CommentListWidget();
         return s;
     };
+    State.newIState = function () {
+        return new App(State.init());
+    };
     return State;
 }());
 exports.State = State;
+var App = /** @class */ (function () {
+    function App(state) {
+        this.state = state;
+    }
+    App.prototype.setState = function (callback) {
+        callback(this.state);
+    };
+    App.prototype.getState = function () {
+        return this.state;
+    };
+    return App;
+}());
 
 
 /***/ }),
@@ -770,13 +785,13 @@ var CommentService = /** @class */ (function () {
         this.comments = comments;
     }
     CommentService.prototype.init = function (state) {
-        this._state = state;
+        this.state = state;
         var listItems = [];
         this.comments.forEach(function (comment) {
             var listItem = new comment_1.CommentListItem(comment, "", "", "");
             listItems.push(listItem);
         });
-        this._state.getState().commentListWidget.comments = listItems;
+        this.state.getState().commentListWidget.comments = listItems;
     };
     CommentService.prototype.submitComment = function (comment, timeout) {
         return __awaiter(this, void 0, void 0, function () {
@@ -793,7 +808,7 @@ var CommentService = /** @class */ (function () {
                         return [4 /*yield*/, wait];
                     case 2:
                         _b.sent();
-                        this._state.setState(function (state) {
+                        this.state.setState(function (state) {
                             state.commentListWidget.comments.unshift(listItem_1);
                         });
                         return [2 /*return*/];
@@ -802,7 +817,7 @@ var CommentService = /** @class */ (function () {
                         return [4 /*yield*/, wait];
                     case 4:
                         _b.sent();
-                        this._state.setState(function (state) {
+                        this.state.setState(function (state) {
                             state.commentListWidget.comments.unshift(listItem);
                         });
                         return [2 /*return*/];
