@@ -75,6 +75,44 @@ exports[`CommentComponent publish form 2`] = `
             </ul><!--;--></div>"
 `;
 
+exports[`CommentComponent publish form 3`] = `
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\" data-showform=\\"1\\">
+                        <span class=\\"funcbox-placeholder-text\\">
+                            Write a comment...
+                        </span>
+                    </div><form class=\\"funcbox-comment-form hide\\">
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" data-body=\\"1\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <div class=\\"funcbox-comment-footer\\">
+                            <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
+                            <button class=\\"funcbox-comment-submit publish\\" data-submit=\\"1\\">Publish</button>
+                        </div>
+                    </form><ul class=\\"funcbox-comment-list\\">
+                <li class=\\"funcbox-comment-item error-highlight\\">
+                    <div class=\\"funcbox-comment-item-error \\">
+                        <div class=\\"funcbox-comment-item-error-header\\">
+                            <h3>A server problem<!--;--></h3>
+                            <svg class=\\"close\\" data-index=\\"0\\" fill=\\"#000000\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" width=\\"24\\" xmlns=\\"http://www.w3.org/2000/svg\\">
+                                <path d=\\"M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z\\"></path>
+                                <path d=\\"M0 0h24v24H0z\\" fill=\\"none\\"></path>
+                            </svg>
+                        </div>
+                        <p>It was a problem on our server, please try again.<!--;--></p>
+                    </div>
+                    This is another comment.<!--;--></li><li class=\\"funcbox-comment-item highlight\\">
+                    <div class=\\"funcbox-comment-item-error hide\\">
+                        <div class=\\"funcbox-comment-item-error-header\\">
+                            <h3><!--;--></h3>
+                            <svg class=\\"close\\" data-index=\\"1\\" fill=\\"#000000\\" height=\\"24\\" viewBox=\\"0 0 24 24\\" width=\\"24\\" xmlns=\\"http://www.w3.org/2000/svg\\">
+                                <path d=\\"M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z\\"></path>
+                                <path d=\\"M0 0h24v24H0z\\" fill=\\"none\\"></path>
+                            </svg>
+                        </div>
+                        <p><!--;--></p>
+                    </div>
+                    This is a comment text.<!--;--></li><!--;-->
+            </ul><!--;--></div>"
+`;
+
 exports[`CommentComponent show form 1`] = `
 "<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder hide\\" data-showform=\\"1\\">
                         <span class=\\"funcbox-placeholder-text\\">

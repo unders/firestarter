@@ -56,22 +56,29 @@ class Pager {
         expect(this.formWidget.form.klass).toEqual(css.empty);
         expect(this.formWidget.data.body).toEqual(text);
     }
-
-    async submitForm(want: string) {
+    async submitForm(status: number) {
         const el = this.root.querySelector("[data-submit]") as HTMLElement;
         expect(el).not.toBeNull();
         el.click();
         expect(this.formWidget.form.klass).toEqual(css.hide);
         expect(this.formWidget.placeholder.klass).toEqual(css.show);
-        expect(this.formWidget.form.klass).toEqual(css.hide);
         expect(this.formWidget.submit.disable).toBeFalsy();
         expect(this.formWidget.data.body).toEqual("");
-        await this.mock.simulateResponse(200, "{}");
-        await sleep(1);
-        expect(this.listWidget.comments[0].data.body).toEqual(want);
+        await this.mock.simulateResponse(status, "{}");
+    }
+    hasHighlightedComment(index: number, want: string) {
+        const comment = this.listWidget.comments[index];
+        expect(comment.data.body).toEqual(want);
+        expect(comment.klass).toEqual(css.highlight);
+        expect(comment.errorKlass).toEqual(css.hide);
+    }
+    hasErrorComment(index: number, want: string) {
+        const comment = this.listWidget.comments[index];
+        expect(comment.data.body).toEqual(want);
+        expect(comment.klass).toEqual(css.errHighlight);
+        expect(comment.errorKlass).toEqual(css.show);
     }
 }
-
 
 describe("CommentComponent", () => {
     const [mock, client] = newClient();
@@ -103,16 +110,29 @@ describe("CommentComponent", () => {
     });
 
     test("publish form", async () => {
+        // Add comment without any text
         page.showForm();
         page.submitInvalidForm();
         comment.render();
         expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
 
+        // add valid comment
         page.writeComment("This is a comment text.");
         comment.render();
-        await page.submitForm("This is a comment text.");
+        await page.submitForm(200);
         comment.render();
         expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+        await sleep(1);
+        page.hasHighlightedComment(0,"This is a comment text.")
+
+        // add comment that fails on server...
+        page.writeComment("This is another comment.");
+        comment.render();
+        await page.submitForm(500); // crash on server
+        comment.render();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+        await sleep(1);
+        page.hasErrorComment(0, "This is another comment.")
     });
 
 });
