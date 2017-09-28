@@ -15,3 +15,19 @@ exports[`App #render() 1`] = `
                 <!--;-->
             </ul><!--;--></div>"
 `;
+
+exports[`App show form 1`] = `
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder hide\\" data-showform=\\"1\\">
+                        <span class=\\"funcbox-placeholder-text\\">
+                            Write a comment...
+                        </span>
+                    </div><form class=\\"funcbox-comment-form \\">
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" data-body=\\"1\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <div class=\\"funcbox-comment-footer\\">
+                            <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
+                            <button class=\\"funcbox-comment-submit publish\\" data-submit=\\"1\\">Publish</button>
+                        </div>
+                    </form><ul class=\\"funcbox-comment-list\\">
+                <!--;-->
+            </ul><!--;--></div>"
+`;
