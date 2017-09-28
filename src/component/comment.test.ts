@@ -66,6 +66,17 @@ class Page {
         expect(this.formWidget.data.body).toEqual("");
         await this.mock.simulateResponse(status, "{}");
     }
+
+    removeErrorComment(index:number, notRemoved: string) {
+        const selector = `[data-index="${index}"]`;
+        const el = this.root.querySelector(selector) as HTMLElement;
+        expect(el).not.toBeNull();
+        el.click();
+
+        this.listWidget.comments.forEach((comment) => {
+            expect(comment.data.body).toEqual(notRemoved);
+        });
+    }
     hasHighlightedComment(index: number, want: string) {
         const comment = this.listWidget.comments[index];
         expect(comment.data.body).toEqual(want);
@@ -134,5 +145,13 @@ describe("CommentComponent", () => {
         await sleep(1);
         page.hasErrorComment(0, "This is another comment.")
     });
+
+
+    test("remove comment with error", () => {
+        page.removeErrorComment(0, "This is a comment text.");
+        comment.render();
+        // expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+    });
+
 
 });
