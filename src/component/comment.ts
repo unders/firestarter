@@ -185,6 +185,7 @@ class Form {
                                     data-cancel="1"
                                     onclick=${this.cancelForm}>Cancel</button>
                             <button class="funcbox-comment-submit publish"
+                                    data-submit="1"
                                     disabled="${w.submit.disable}">Publish</button>
                         </div>
                     </form>`;

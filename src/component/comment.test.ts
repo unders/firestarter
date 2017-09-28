@@ -30,6 +30,13 @@ class Pager {
         expect(this.formWidget.placeholder.klass).toEqual(css.show);
         expect(this.formWidget.form.klass).toEqual(css.hide);
     }
+    submitInvalidForm() {
+        const el = this.root.querySelector("[data-submit]") as HTMLElement;
+        expect(el).not.toBeNull();
+        el.click();
+        expect(this.formWidget.placeholder.klass).toEqual(css.hide);
+        expect(this.formWidget.form.klass).toEqual(css.error);
+    }
 }
 
 
@@ -59,7 +66,14 @@ describe("CommentComponent", () => {
             page.cancelForm();
             comment.render();
             expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
-        })
+        });
+
+        test("#PublishForm() shows error when no input data", () => {
+            page.showForm();
+            page.submitInvalidForm();
+            comment.render();
+            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+        });
 
     })
 });
