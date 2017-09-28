@@ -12,7 +12,7 @@ describe("CommentComponent", () => {
     service.init(state);
     const widget = state.getState().commentFormWidget;
     document.body.innerHTML = '<div id="funcbox-comment"></div>';
-    const root = document.querySelector("#funcbox-comment");
+    const root = document.querySelector("#funcbox-comment") as Element;
 
      const comment = new CommentComponent({
          root: root,
@@ -28,7 +28,7 @@ describe("CommentComponent", () => {
 
     describe("#form", () => {
         test("#showForm()", () => {
-            const el = document.body.querySelector(".funcbox-placeholder") as HTMLElement;
+            const el = root.querySelector("[data-showForm]") as HTMLElement;
             el.click();
             expect(widget.placeholder.klass).toEqual(css.hide);
             expect(widget.form.klass).toEqual(css.show);
@@ -39,7 +39,7 @@ describe("CommentComponent", () => {
         });
 
         test("#cancelForm()", () => {
-            const el = document.body.querySelector("[data-cancel]") as HTMLElement;
+            const el = root.querySelector("[data-cancel]") as HTMLElement;
             el.click();
             expect(widget.placeholder.klass).toEqual(css.show);
             expect(widget.form.klass).toEqual(css.hide);

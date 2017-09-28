@@ -166,6 +166,7 @@ class Form {
         return this.html`
                     <h3 class="funcbox-comment-heading">Comments</h3>
                     <div    class="${['funcbox-placeholder', w.placeholder.klass].join(' ')}"
+                            data-showForm="1"
                             onclick="${this.showForm}">
                         <span class="funcbox-placeholder-text">
                             Write a comment...

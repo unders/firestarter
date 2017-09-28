@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CommentComponent #form #cancelForm() 1`] = `
-"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\">
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\" data-showform=\\"1\\">
                         <span class=\\"funcbox-placeholder-text\\">
                             Write a comment...
                         </span>
@@ -17,7 +17,7 @@ exports[`CommentComponent #form #cancelForm() 1`] = `
 `;
 
 exports[`CommentComponent #form #showForm() 1`] = `
-"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder hide\\">
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder hide\\" data-showform=\\"1\\">
                         <span class=\\"funcbox-placeholder-text\\">
                             Write a comment...
                         </span>
@@ -33,7 +33,7 @@ exports[`CommentComponent #form #showForm() 1`] = `
 `;
 
 exports[`CommentComponent #render() 1`] = `
-"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\">
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\" data-showform=\\"1\\">
                         <span class=\\"funcbox-placeholder-text\\">
                             Write a comment...
                         </span>
