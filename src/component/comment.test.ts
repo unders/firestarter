@@ -150,7 +150,7 @@ describe("CommentComponent", () => {
     test("remove comment with error", () => {
         page.removeErrorComment(0, "This is a comment text.");
         comment.render();
-        // expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
     });
 
 
