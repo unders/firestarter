@@ -8,7 +8,7 @@ import { State } from "../data/state";
 import { XMLHttpRequestMock } from "../test/mock";
 
 
-class Pager {
+class Page {
     private readonly mock: XMLHttpRequestMock;
     private readonly root: HTMLElement;
     private readonly formWidget: CommentFormWidget;
@@ -90,7 +90,7 @@ describe("CommentComponent", () => {
     CommentComponent.timeout = () => { return 0; };
     const comment = new CommentComponent({ root: root, service: service, state: state });
     const s = state.getState();
-    const page = new Pager(root, s.commentFormWidget, s.commentListWidget, mock);
+    const page = new Page(root, s.commentFormWidget, s.commentListWidget, mock);
 
     test("#render()", () => {
         comment.render();
