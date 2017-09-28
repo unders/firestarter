@@ -8,31 +8,31 @@ import { Dom as dom } from "../dom/dom"
 import { CommentService } from "../service/comment";
 
 interface Props {
-    root: string;
+    root: Element | null;
     state: IState
     commentService: CommentService;
 }
 
-export class Component {
+export class CommentComponent {
     readonly root: Element;
     readonly form: Form;
     readonly list: List;
     html: (template: TemplateStringsArray, ...args : any[]) => void;
 
     constructor(props: Props) {
-        const root = document.querySelector(props.root);
-
-        if (root) {
-            this.root = root;
+        if (props.root) {
+            this.root = props.root;
             this.html = dom.bind(this.root);
-            this.form = new Form(root, props.state, props.commentService);
+            this.form = new Form(this.root, props.state, props.commentService);
             this.list = new List(props.state);
         }
     }
 
     onStateChange(): void {
-        this.form.onStateChange();
-        this.list.onStateChange();
+        if (this.root) {
+            this.form.onStateChange();
+            this.list.onStateChange();
+        }
     }
 
     render() {
@@ -181,6 +181,7 @@ class Form {
                                     placeholder="Write a comment..."></textarea>
                         <div class="funcbox-comment-footer">
                             <button class="funcbox-comment-submit"
+                                    data-cancel="1"
                                     onclick=${this.cancelForm}>Cancel</button>
                             <button class="funcbox-comment-submit publish"
                                     disabled="${w.submit.disable}">Publish</button>

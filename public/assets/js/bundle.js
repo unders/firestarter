@@ -201,13 +201,14 @@ main();
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var state_1 = __webpack_require__(4);
-var comment = __webpack_require__(5);
+var comment_1 = __webpack_require__(5);
 var App = /** @class */ (function () {
     function App(commentService) {
         this.state = state_1.State.init();
         commentService.init(this);
-        this.comment = new comment.Component({
-            root: "#funcbox-comment",
+        var comment = document.querySelector("#funcbox-comment");
+        this.comment = new comment_1.CommentComponent({
+            root: comment,
             commentService: commentService,
             state: this
         });
@@ -274,21 +275,22 @@ var App = /** @class */ (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var css_1 = __webpack_require__(1);
 var dom_1 = __webpack_require__(6);
-var Component = /** @class */ (function () {
-    function Component(props) {
-        var root = document.querySelector(props.root);
-        if (root) {
-            this.root = root;
+var CommentComponent = /** @class */ (function () {
+    function CommentComponent(props) {
+        if (props.root) {
+            this.root = props.root;
             this.html = dom_1.Dom.bind(this.root);
-            this.form = new Form(root, props.state, props.commentService);
+            this.form = new Form(this.root, props.state, props.commentService);
             this.list = new List(props.state);
         }
     }
-    Component.prototype.onStateChange = function () {
-        this.form.onStateChange();
-        this.list.onStateChange();
+    CommentComponent.prototype.onStateChange = function () {
+        if (this.root) {
+            this.form.onStateChange();
+            this.list.onStateChange();
+        }
     };
-    Component.prototype.render = function () {
+    CommentComponent.prototype.render = function () {
         if (this.root) {
             (_a = ["", ""], _a.raw = ["",
                 ""], this.html(_a, [
@@ -298,9 +300,9 @@ var Component = /** @class */ (function () {
         }
         var _a;
     };
-    return Component;
+    return CommentComponent;
 }());
-exports.Component = Component;
+exports.CommentComponent = CommentComponent;
 var Form = /** @class */ (function () {
     function Form(root, state, service) {
         this.root = root;
@@ -393,7 +395,7 @@ var Form = /** @class */ (function () {
     };
     Form.prototype.render = function () {
         var w = this.widget;
-        return (_a = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], _a.raw = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], this.html(_a, ['funcbox-placeholder', w.placeholder.klass].join(' '), this.showForm, ['funcbox-comment-form', w.form.klass].join(' '), this.publish, this.saveInput, this.removeError, w.data.body, this.cancelForm, w.submit.disable));
+        return (_a = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    data-cancel=\"1\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], _a.raw = ["\n                    <h3 class=\"funcbox-comment-heading\">Comments</h3>\n                    <div    class=\"", "\"\n                            onclick=\"", "\">\n                        <span class=\"funcbox-placeholder-text\">\n                            Write a comment...\n                        </span>\n                    </div>\n                    <form   class=\"", "\"\n                            onsubmit=\"", "\"\n                            oninput=", ">\n                        <textarea   class=\"funcbox-comment-textarea\"\n                                    name=\"body\"\n                                    oninput=\"", "\"\n                                    value=", "\n                                    placeholder=\"Write a comment...\"></textarea>\n                        <div class=\"funcbox-comment-footer\">\n                            <button class=\"funcbox-comment-submit\"\n                                    data-cancel=\"1\"\n                                    onclick=", ">Cancel</button>\n                            <button class=\"funcbox-comment-submit publish\"\n                                    disabled=\"", "\">Publish</button>\n                        </div>\n                    </form>"], this.html(_a, ['funcbox-placeholder', w.placeholder.klass].join(' '), this.showForm, ['funcbox-comment-form', w.form.klass].join(' '), this.publish, this.saveInput, this.removeError, w.data.body, this.cancelForm, w.submit.disable));
         var _a;
     };
     return Form;

@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CommentComponent #form #cancelForm() 1`] = `
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\">
+                        <span class=\\"funcbox-placeholder-text\\">
+                            Write a comment...
+                        </span>
+                    </div><form class=\\"funcbox-comment-form hide\\">
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <div class=\\"funcbox-comment-footer\\">
+                            <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
+                            <button class=\\"funcbox-comment-submit publish\\">Publish</button>
+                        </div>
+                    </form><ul class=\\"funcbox-comment-list\\">
+                <!--;-->
+            </ul><!--;--></div>"
+`;
+
+exports[`CommentComponent #form #showForm() 1`] = `
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder hide\\">
+                        <span class=\\"funcbox-placeholder-text\\">
+                            Write a comment...
+                        </span>
+                    </div><form class=\\"funcbox-comment-form \\">
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <div class=\\"funcbox-comment-footer\\">
+                            <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
+                            <button class=\\"funcbox-comment-submit publish\\">Publish</button>
+                        </div>
+                    </form><ul class=\\"funcbox-comment-list\\">
+                <!--;-->
+            </ul><!--;--></div>"
+`;
+
+exports[`CommentComponent #render() 1`] = `
+"<div id=\\"funcbox-comment\\"><h3 class=\\"funcbox-comment-heading\\">Comments</h3><div class=\\"funcbox-placeholder \\">
+                        <span class=\\"funcbox-placeholder-text\\">
+                            Write a comment...
+                        </span>
+                    </div><form class=\\"funcbox-comment-form hide\\">
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <div class=\\"funcbox-comment-footer\\">
+                            <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
+                            <button class=\\"funcbox-comment-submit publish\\">Publish</button>
+                        </div>
+                    </form><ul class=\\"funcbox-comment-list\\">
+                <!--;-->
+            </ul><!--;--></div>"
+`;

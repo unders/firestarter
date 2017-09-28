@@ -1,19 +1,20 @@
 import { State } from "../data/state"
-import * as comment from "../component/comment"
+import { CommentComponent } from "../component/comment"
 import { CommentService } from "../service/comment";
 
 export class App {
     readonly state: State;
-    readonly comment: comment.Component;
+    readonly comment: CommentComponent;
 
     constructor(commentService: CommentService) {
         this.state = State.init();
         commentService.init(this);
-        this.comment = new comment.Component({
-                root: "#funcbox-comment",
+
+        const comment = document.querySelector("#funcbox-comment");
+        this.comment = new CommentComponent({
+                root: comment,
                 commentService: commentService,
-                state: this
-            });
+                state: this });
     }
 
     setState(callback: (s: State) => {}): void {
