@@ -57,7 +57,7 @@ class Pager {
         expect(this.formWidget.data.body).toEqual(text);
     }
 
-    async submitForm(text: string) {
+    async submitForm(want: string) {
         const el = this.root.querySelector("[data-submit]") as HTMLElement;
         expect(el).not.toBeNull();
         el.click();
@@ -68,7 +68,7 @@ class Pager {
         expect(this.formWidget.data.body).toEqual("");
         await this.mock.simulateResponse(200, "{}");
         await sleep(1);
-        expect(this.listWidget.comments[0].data.body).toEqual(text);
+        expect(this.listWidget.comments[0].data.body).toEqual(want);
     }
 }
 
@@ -90,31 +90,29 @@ describe("CommentComponent", () => {
         expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
     });
 
-    describe("#form", () => {
-        test("#showForm()", () => {
-            page.showForm();
-            comment.render();
-            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
-        });
+    test("show form", () => {
+        page.showForm();
+        comment.render();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+    });
 
-        test("#cancelForm()", () => {
-            page.cancelForm();
-            comment.render();
-            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
-        });
+    test("cancel form", () => {
+        page.cancelForm();
+        comment.render();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+    });
 
-        test("#PublishForm()", async () => {
-            page.showForm();
-            page.submitInvalidForm();
-            comment.render();
-            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+    test("publish form", async () => {
+        page.showForm();
+        page.submitInvalidForm();
+        comment.render();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
 
-            page.writeComment("This is a comment text.");
-            comment.render();
-            await page.submitForm("This is a comment text.");
-            comment.render();
-            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
-        });
+        page.writeComment("This is a comment text.");
+        comment.render();
+        await page.submitForm("This is a comment text.");
+        comment.render();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
+    });
 
-    })
 });
