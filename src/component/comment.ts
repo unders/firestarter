@@ -177,6 +177,7 @@ class Form {
                             oninput=${this.saveInput}>
                         <textarea   class="funcbox-comment-textarea"
                                     name="body"
+                                    data-body="1"
                                     oninput="${this.removeError}"
                                     value=${w.data.body}
                                     placeholder="Write a comment..."></textarea>

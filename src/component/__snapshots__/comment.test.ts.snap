@@ -6,7 +6,7 @@ exports[`CommentComponent #form #PublishForm() shows error when no input data 1`
                             Write a comment...
                         </span>
                     </div><form class=\\"funcbox-comment-form error\\">
-                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" data-body=\\"1\\" placeholder=\\"Write a comment...\\"></textarea>
                         <div class=\\"funcbox-comment-footer\\">
                             <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
                             <button class=\\"funcbox-comment-submit publish\\" data-submit=\\"1\\">Publish</button>
@@ -22,7 +22,7 @@ exports[`CommentComponent #form #cancelForm() 1`] = `
                             Write a comment...
                         </span>
                     </div><form class=\\"funcbox-comment-form hide\\">
-                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" data-body=\\"1\\" placeholder=\\"Write a comment...\\"></textarea>
                         <div class=\\"funcbox-comment-footer\\">
                             <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
                             <button class=\\"funcbox-comment-submit publish\\" data-submit=\\"1\\">Publish</button>
@@ -38,7 +38,7 @@ exports[`CommentComponent #form #showForm() 1`] = `
                             Write a comment...
                         </span>
                     </div><form class=\\"funcbox-comment-form \\">
-                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" data-body=\\"1\\" placeholder=\\"Write a comment...\\"></textarea>
                         <div class=\\"funcbox-comment-footer\\">
                             <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
                             <button class=\\"funcbox-comment-submit publish\\" data-submit=\\"1\\">Publish</button>
@@ -54,7 +54,7 @@ exports[`CommentComponent #render() 1`] = `
                             Write a comment...
                         </span>
                     </div><form class=\\"funcbox-comment-form hide\\">
-                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" placeholder=\\"Write a comment...\\"></textarea>
+                        <textarea class=\\"funcbox-comment-textarea\\" name=\\"body\\" data-body=\\"1\\" placeholder=\\"Write a comment...\\"></textarea>
                         <div class=\\"funcbox-comment-footer\\">
                             <button class=\\"funcbox-comment-submit\\" data-cancel=\\"1\\">Cancel</button>
                             <button class=\\"funcbox-comment-submit publish\\" data-submit=\\"1\\">Publish</button>
