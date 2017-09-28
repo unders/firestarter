@@ -231,7 +231,8 @@ header a {
   margin-bottom: 40px;
   padding: 20px 20px;
   border: 1px solid rgba(0, 0, 0, 0.09);
-  border-radius: 3px; }
+  border-radius: 3px;
+  word-wrap: break-word; }
 
 .funcbox-comment-item.highlight {
   animation: highlight 1.5s ease-out; }
