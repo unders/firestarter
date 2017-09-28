@@ -331,7 +331,13 @@ var Form = /** @class */ (function () {
     // focus must be called after this.state.setState()
     Form.prototype.focus = function () {
         var el = this.root.querySelector("[data-body]");
-        el.focus();
+        el && el.focus();
+    };
+    Form.prototype.empty = function () {
+        var el = this.root.querySelector("[data-body]");
+        if (el) {
+            el.value = "";
+        }
     };
     Form.prototype.showForm = function (e) {
         var callback = function (s) {
@@ -355,6 +361,7 @@ var Form = /** @class */ (function () {
             w.data.body = "";
         };
         this.state.setState(callback);
+        this.empty();
     };
     Form.prototype.saveInput = function (e) {
         var input = e.target;
@@ -378,6 +385,7 @@ var Form = /** @class */ (function () {
             w.form.klass = css_1.CSS.error;
         };
         this.state.setState(callback);
+        this.empty();
         this.focus();
     };
     Form.prototype.isValid = function () {

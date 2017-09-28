@@ -83,8 +83,12 @@ class Form {
 
     // focus must be called after this.state.setState()
     focus() {
-        const el = this.root.querySelector("[data-body]");
-        (el as HTMLTextAreaElement).focus();
+        const el = this.root.querySelector("[data-body]") as HTMLTextAreaElement;
+        el && el.focus();
+    }
+    empty() {
+        const el = this.root.querySelector("[data-body]") as HTMLTextAreaElement;
+        if(el) { el.value = ""; }
     }
 
     showForm(e: Event) {
@@ -113,6 +117,7 @@ class Form {
         };
 
         this.state.setState(callback);
+        this.empty();
     }
 
     saveInput(e: Event) {
@@ -140,6 +145,7 @@ class Form {
             w.form.klass = css.error;
         };
         this.state.setState(callback);
+        this.empty();
         this.focus();
     }
 
