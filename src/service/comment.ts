@@ -50,7 +50,11 @@ export class CommentService {
 
     private minWait(timeout: number): Promise<any> {
         return new Promise<any>((resolve) => {
-            setTimeout(resolve, timeout);
+            if (timeout === 0) {
+                resolve();
+            } else {
+                setTimeout(resolve, timeout);
+            }
         });
     }
 }

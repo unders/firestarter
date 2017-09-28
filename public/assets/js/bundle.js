@@ -300,6 +300,7 @@ var CommentComponent = /** @class */ (function () {
         }
         var _a;
     };
+    CommentComponent.timeout = function () { return 500; };
     return CommentComponent;
 }());
 exports.CommentComponent = CommentComponent;
@@ -390,8 +391,15 @@ var Form = /** @class */ (function () {
             return;
         }
         var comment = this.widget.toComment();
-        setTimeout(this.hideForm, 500);
-        this.service.submitComment(comment, 500 * 2);
+        var timeout = CommentComponent.timeout();
+        if (timeout === 0) {
+            this.hideForm();
+            this.service.submitComment(comment, 0);
+        }
+        else {
+            setTimeout(this.hideForm, timeout);
+            this.service.submitComment(comment, timeout * 2);
+        }
     };
     Form.prototype.render = function () {
         var w = this.widget;
@@ -829,7 +837,12 @@ var CommentService = /** @class */ (function () {
     };
     CommentService.prototype.minWait = function (timeout) {
         return new Promise(function (resolve) {
-            setTimeout(resolve, timeout);
+            if (timeout === 0) {
+                resolve();
+            }
+            else {
+                setTimeout(resolve, timeout);
+            }
         });
     };
     return CommentService;

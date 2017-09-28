@@ -28,6 +28,8 @@ export class CommentComponent {
         }
     }
 
+    static timeout = (): number => { return 500; };
+
     onStateChange(): void {
         if (this.root) {
             this.form.onStateChange();
@@ -156,8 +158,14 @@ class Form {
         }
 
         const comment = this.widget.toComment();
-        setTimeout(this.hideForm, 500);
-        this.service.submitComment(comment, 500*2);
+        const timeout = CommentComponent.timeout();
+        if (timeout === 0) {
+            this.hideForm();
+            this.service.submitComment(comment, 0)
+        } else {
+            setTimeout(this.hideForm, timeout);
+            this.service.submitComment(comment, timeout*2);
+        }
     }
 
     render() {

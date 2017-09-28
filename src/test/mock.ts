@@ -9,7 +9,7 @@ export const newClient = (): [XMLHttpRequestMock, Client] => {
 };
 
 
-class XMLHttpRequestMock implements Request {
+export class XMLHttpRequestMock implements Request {
     responseText: string;
     status: number;
     timeout: number;
