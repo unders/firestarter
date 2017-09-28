@@ -209,7 +209,7 @@ var App = /** @class */ (function () {
         var comment = document.querySelector("#funcbox-comment");
         this.comment = new comment_1.CommentComponent({
             root: comment,
-            commentService: commentService,
+            service: commentService,
             state: this
         });
     }
@@ -280,7 +280,7 @@ var CommentComponent = /** @class */ (function () {
         if (props.root) {
             this.root = props.root;
             this.html = dom_1.Dom.bind(this.root);
-            this.form = new Form(this.root, props.state, props.commentService);
+            this.form = new Form(this.root, props.state, props.service);
             this.list = new List(props.state);
         }
     }

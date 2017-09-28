@@ -10,7 +10,7 @@ import { CommentService } from "../service/comment";
 interface Props {
     root: Element | null;
     state: IState
-    commentService: CommentService;
+    service: CommentService;
 }
 
 export class CommentComponent {
@@ -23,7 +23,7 @@ export class CommentComponent {
         if (props.root) {
             this.root = props.root;
             this.html = dom.bind(this.root);
-            this.form = new Form(this.root, props.state, props.commentService);
+            this.form = new Form(this.root, props.state, props.service);
             this.list = new List(props.state);
         }
     }

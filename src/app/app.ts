@@ -13,7 +13,7 @@ export class App {
         const comment = document.querySelector("#funcbox-comment");
         this.comment = new CommentComponent({
                 root: comment,
-                commentService: commentService,
+                service: commentService,
                 state: this });
     }
 

@@ -1,52 +1,64 @@
 import { CSS as css } from '../data/css';
 import { CommentService } from '../service/comment';
 import { CommentComponent } from './comment';
+import { CommentFormWidget } from '../data/comment';
 import { newClient} from "../test/mock";
 import { adjustSnap } from "../test/helper";
 import { State } from "../data/state";
+
+
+class Pager {
+    private readonly root: HTMLElement;
+    private readonly formWidget: CommentFormWidget;
+
+    constructor(root: HTMLElement, form: CommentFormWidget) {
+        this.root = root;
+        this.formWidget = form;
+    }
+
+    showForm() {
+        const el = this.root.querySelector("[data-showForm]") as HTMLElement;
+        expect(el).not.toBeNull();
+        el.click();
+        expect(this.formWidget.placeholder.klass).toEqual(css.hide);
+        expect(this.formWidget.form.klass).toEqual(css.show);
+    }
+    cancelForm() {
+        const el = this.root.querySelector("[data-cancel]") as HTMLElement;
+        expect(el).not.toBeNull();
+        el.click();
+        expect(this.formWidget.placeholder.klass).toEqual(css.show);
+        expect(this.formWidget.form.klass).toEqual(css.hide);
+    }
+}
+
 
 describe("CommentComponent", () => {
     const [mock, client] = newClient();
     const state = State.newIState();
     const service = new CommentService(client, []);
     service.init(state);
-    const widget = state.getState().commentFormWidget;
     document.body.innerHTML = '<div id="funcbox-comment"></div>';
-    const root = document.querySelector("#funcbox-comment") as Element;
-
-     const comment = new CommentComponent({
-         root: root,
-         commentService: service,
-         state: state
-     });
-    comment.render();
+    const root = document.querySelector("#funcbox-comment") as HTMLElement;
+    const page = new Pager(root, state.getState().commentFormWidget);
+    const comment = new CommentComponent({ root: root, service: service, state: state });
 
     test("#render()", () => {
-        const got = adjustSnap(document.body.innerHTML);
-        expect(got).toMatchSnapshot();
+        comment.render();
+        expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
     });
 
     describe("#form", () => {
         test("#showForm()", () => {
-            const el = root.querySelector("[data-showForm]") as HTMLElement;
-            el.click();
-            expect(widget.placeholder.klass).toEqual(css.hide);
-            expect(widget.form.klass).toEqual(css.show);
-
+            page.showForm();
             comment.render();
-            const got = adjustSnap(document.body.innerHTML);
-            expect(got).toMatchSnapshot();
+            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
         });
 
         test("#cancelForm()", () => {
-            const el = root.querySelector("[data-cancel]") as HTMLElement;
-            el.click();
-            expect(widget.placeholder.klass).toEqual(css.show);
-            expect(widget.form.klass).toEqual(css.hide);
-
+            page.cancelForm();
             comment.render();
-            const got = adjustSnap(document.body.innerHTML);
-            expect(got).toMatchSnapshot();
+            expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
         })
 
     })
