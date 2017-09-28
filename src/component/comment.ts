@@ -83,7 +83,7 @@ class Form {
 
     // focus must be called after this.state.setState()
     focus() {
-        const el = this.root.querySelector(".funcbox-comment-textarea");
+        const el = this.root.querySelector("[data-body]");
         (el as HTMLTextAreaElement).focus();
     }
 

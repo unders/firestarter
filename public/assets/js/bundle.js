@@ -330,7 +330,7 @@ var Form = /** @class */ (function () {
     };
     // focus must be called after this.state.setState()
     Form.prototype.focus = function () {
-        var el = this.root.querySelector(".funcbox-comment-textarea");
+        var el = this.root.querySelector("[data-body]");
         el.focus();
     };
     Form.prototype.showForm = function (e) {
