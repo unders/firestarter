@@ -146,12 +146,9 @@ describe("CommentComponent", () => {
         page.hasErrorComment(0, "This is another comment.")
     });
 
-
     test("remove comment with error", () => {
         page.removeErrorComment(0, "This is a comment text.");
         comment.render();
         expect(adjustSnap(document.body.innerHTML)).toMatchSnapshot();
     });
-
-
 });
