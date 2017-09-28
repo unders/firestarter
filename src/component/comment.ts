@@ -193,7 +193,6 @@ class Form {
                                     name="body"
                                     data-body="1"
                                     oninput="${this.removeError}"
-                                    value=${w.data.body}
                                     placeholder="Write a comment..."></textarea>
                         <div class="funcbox-comment-footer">
                             <button class="funcbox-comment-submit"
