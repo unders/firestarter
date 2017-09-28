@@ -1,9 +1,9 @@
-import {Client, Headers} from "./client/client";
-import { CSS as css} from './data/css';
-import {App} from "./app/app";
-import {CommentService} from "./service/comment";
-import {adjustSnap} from "./test/helper";
-import {CommentComponent} from "./component/comment";
+import {Client, Headers} from "../client/client";
+import { CSS as css} from '../data/css';
+import {App} from "./app";
+import {CommentService} from "../service/comment";
+import {adjustSnap} from "../test/helper";
+import {CommentComponent} from "../component/comment";
 
 class Page {
     readonly app: App;
