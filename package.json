@@ -1,7 +1,7 @@
 {
-  "name": "typescript-app",
+  "name": "firestarter",
   "version": "0.0.1",
-  "description": "learn typescript",
+  "description": "firestarter frontend app",
   "main": "index.js",
   "dependencies": {
     "hyperhtml": "^1.7.3"
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "github.com/unders/typescript"
+    "url": "github.com/unders/firestarter"
   },
   "author": "Anders Tornqvist",
   "license": "ISC",
