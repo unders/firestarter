@@ -5,6 +5,7 @@ help:
 
 .PHONY: install
 install: ## installs dependencis
+	go get github.com/unders/servdir
 	npm install
 
 .PHONY: start
