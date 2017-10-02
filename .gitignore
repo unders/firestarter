@@ -63,3 +63,7 @@ public/*.js
 public/*.map
 
 dist
+
+## ignore generated JavaScript files
+functions/**/*.js
+functions/**/*.js.map

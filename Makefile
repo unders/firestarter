@@ -5,7 +5,9 @@ help:
 
 .PHONY: install
 install: ## installs dependencis
+	## brew install yarn --without-node
 	npm install -g firebase-tools
+	cd functions && yarn install
 	npm install
 
 .PHONY: start
@@ -19,8 +21,9 @@ test: ## runs JavaScript tests
 .PHONY: dist
 dist: ## creates a release
 	@node_modules/.bin/node-sass --output-style compressed --output ./dist/assets/css ./src/css
-	@rsync -avz --exclude 'assets/css' --exclude 'assets/js' public/ dist/
 	@node_modules/.bin/webpack --config support/webpack.prod.config.js
+	@cd functions && tsc
+	@rsync -avz --exclude 'assets/css' --exclude 'assets/js' public/ dist/
 
 .PHONY: deploy
 deploy: ## deploys to firebase

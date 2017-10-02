@@ -9,3 +9,9 @@ deployed to Firebase.
 ### Help
 Run `make` for available commands
 
+
+
+### Firebase Functions
+* [Firebase Typescript Getting Started](https://github.com/firebase/functions-samples/tree/master/typescript-getting-started)
+* [Docs Functions](https://firebase.google.com/docs/functions/)
+* [Firebase functions samples](https://github.com/firebase/functions-samples)
