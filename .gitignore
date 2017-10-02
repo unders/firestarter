@@ -62,3 +62,4 @@ typings/
 public/*.js
 public/*.map
 
+dist
