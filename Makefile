@@ -16,6 +16,10 @@ start: ## starts the dev environment
 test: ## runs JavaScript tests
 	@clear && node_modules/.bin/jest
 
+.PHONY: deploy
+deploy: ## deploys to firebase
+	firebase deploy --public public
+
 .PHONY: tree
 tree: ## lists the projects file structure
 	tree -I node_modules
