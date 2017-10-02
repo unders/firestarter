@@ -5,7 +5,7 @@ help:
 
 .PHONY: install
 install: ## installs dependencis
-	go get github.com/unders/servdir
+	npm install -g firebase-tools
 	npm install
 
 .PHONY: start
@@ -13,7 +13,7 @@ start: ## starts the dev environment
 	@modd -f support/modd.conf
 
 .PHONY: test
-test: ## runs JavaScript tests.
+test: ## runs JavaScript tests
 	@clear && node_modules/.bin/jest
 
 .PHONY: tree
