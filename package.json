@@ -24,7 +24,7 @@
     "type": "git",
     "url": "github.com/unders/firestarter"
   },
-  "author": "Anders Tornqvist",
+  "author": "Anders Törnqvist",
   "license": "ISC",
   "jest": {
     "transform": {
