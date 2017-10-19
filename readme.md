@@ -18,3 +18,6 @@ Run `make` for available commands
 * [Docs Functions](https://firebase.google.com/docs/functions/)
 * [Firebase functions samples](https://github.com/firebase/functions-samples)
 
+### Firebase Help
+* [Welcome to the Firebase Help Center](https://support.google.com/firebase#topic=6399725)
+

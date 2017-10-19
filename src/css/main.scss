@@ -59,18 +59,27 @@ body {
 header {
   background: $primary-color;
   color: $primary-color-text;
+  max-height: 86px;
 }
 header h1 {
   margin: 0px;
   font-size: 40px;
 }
 header a {
+  float: left;
   padding-top: 20px;
   padding-bottom: 20px;
-  @include ph1-to-ph2($breakpoint-small);
   display: inline-block;
+  @include ph1-to-ph2($breakpoint-small);
   color: $primary-color-text;
   @include link($primary-color, $primary-color-dark)
+}
+
+.authentication  a {
+  padding-top: 32px;
+  padding-bottom: 31px;
+  display: inline-block;
+  float: right;
 }
 
 //
